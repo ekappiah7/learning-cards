@@ -1,5 +1,5 @@
 // Activity areas and their activities. Add or reorder activities here; each
-// activity becomes playable once `ready` is true and its component exists.
+// activity becomes playable once it has a component in src/activities.
 
 export type ModuleColor = 2 | 3 | 4 | 5 | 6 | 7 | 8;
 export type IconName =
@@ -14,7 +14,6 @@ export type Activity = {
   title: string;        // shown on the tile
   spoken: string;       // read aloud when the tile is tapped
   icon: IconName;
-  ready: boolean;
 };
 
 export type Area = {
@@ -34,10 +33,10 @@ export const AREAS: Area[] = [
     color: 6,
     icon: 'BookOpen',
     activities: [
-      { id: 'clap-words', title: 'Clap the word', spoken: 'Clap the syllables', icon: 'Hand', ready: false },
-      { id: 'clap-sentences', title: 'Clap the sentence', spoken: 'Clap the words in a sentence', icon: 'MessageSquareText', ready: false },
-      { id: 'sound-it-out', title: 'Sound it out', spoken: 'Sound it out', icon: 'AudioLines', ready: false },
-      { id: 'first-sound', title: 'First sound', spoken: 'Find the first sound', icon: 'Ear', ready: false },
+      { id: 'clap-words', title: 'Clap the word', spoken: 'Clap the syllables', icon: 'Hand' },
+      { id: 'clap-sentences', title: 'Clap the sentence', spoken: 'Clap the words in a sentence', icon: 'MessageSquareText' },
+      { id: 'sound-it-out', title: 'Sound it out', spoken: 'Sound it out', icon: 'AudioLines' },
+      { id: 'first-sound', title: 'First sound', spoken: 'Find the first sound', icon: 'Ear' },
     ],
   },
   {
@@ -47,10 +46,10 @@ export const AREAS: Area[] = [
     color: 5,
     icon: 'Hash',
     activities: [
-      { id: 'count-dots', title: 'Count the dots', spoken: 'Count the dots', icon: 'CircleDot', ready: false },
-      { id: 'more-fewer', title: 'More or fewer', spoken: 'More or fewer', icon: 'Scale', ready: false },
-      { id: 'number-line', title: 'Number line hop', spoken: 'Number line hop', icon: 'MoveRight', ready: false },
-      { id: 'adding', title: 'Adding to ten', spoken: 'Adding to ten', icon: 'Plus', ready: false },
+      { id: 'count-dots', title: 'Count the dots', spoken: 'Count the dots', icon: 'CircleDot' },
+      { id: 'more-fewer', title: 'More or fewer', spoken: 'More or fewer', icon: 'Scale' },
+      { id: 'number-line', title: 'Number line hop', spoken: 'Number line hop', icon: 'MoveRight' },
+      { id: 'adding', title: 'Adding to ten', spoken: 'Adding to ten', icon: 'Plus' },
     ],
   },
   {
@@ -60,9 +59,9 @@ export const AREAS: Area[] = [
     color: 3,
     icon: 'Puzzle',
     activities: [
-      { id: 'patterns', title: 'What comes next', spoken: 'What comes next?', icon: 'Shapes', ready: false },
-      { id: 'odd-one-out', title: 'Odd one out', spoken: 'Odd one out', icon: 'SearchX', ready: false },
-      { id: 'sorting', title: 'Sort them', spoken: 'Sort them', icon: 'Layers', ready: false },
+      { id: 'patterns', title: 'What comes next', spoken: 'What comes next?', icon: 'Shapes' },
+      { id: 'odd-one-out', title: 'Odd one out', spoken: 'Odd one out', icon: 'SearchX' },
+      { id: 'sorting', title: 'Sort them', spoken: 'Sort them', icon: 'Layers' },
     ],
   },
   {
@@ -72,9 +71,9 @@ export const AREAS: Area[] = [
     color: 4,
     icon: 'Gamepad2',
     activities: [
-      { id: 'memory', title: 'Memory match', spoken: 'Memory match', icon: 'Copy', ready: false },
-      { id: 'simon', title: 'Copy the colours', spoken: 'Copy the colours', icon: 'Music', ready: false },
-      { id: 'draw', title: 'Draw and stamp', spoken: 'Draw and stamp', icon: 'Brush', ready: false },
+      { id: 'memory', title: 'Memory match', spoken: 'Memory match', icon: 'Copy' },
+      { id: 'simon', title: 'Copy the colours', spoken: 'Copy the colours', icon: 'Music' },
+      { id: 'draw', title: 'Draw and stamp', spoken: 'Draw and stamp', icon: 'Brush' },
     ],
   },
 ];

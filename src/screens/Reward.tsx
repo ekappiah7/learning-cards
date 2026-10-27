@@ -36,7 +36,7 @@ export function Reward({ area, activity, profile }: { area: Area; activity: Acti
             className="pill secondary"
             onClick={() => {
               speak('Play again');
-              navigate({ name: 'area', areaId: area.id });
+              navigate({ name: 'play', areaId: area.id, activityId: activity.id });
             }}
             aria-label={`Play ${activity.title} again`}
           >

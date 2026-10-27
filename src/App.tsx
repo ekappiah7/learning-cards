@@ -1,12 +1,13 @@
 import { useEffect } from 'react';
 import { findActivity, findArea } from './data/areas';
 import { navigate, useRoute } from './router';
-import { useStore } from './store';
+import { starKey, useStore } from './store';
 import { Backdrop } from './components/ui';
 import { Profiles } from './screens/Profiles';
 import { Home } from './screens/Home';
 import { AreaPage } from './screens/AreaPage';
 import { Reward } from './screens/Reward';
+import { ACTIVITIES } from './activities';
 
 export function App() {
   const route = useRoute();
@@ -30,6 +31,12 @@ export function App() {
     if (route.name === 'area') {
       const area = findArea(route.areaId);
       if (area) return <AreaPage key={area.id} area={area} profile={current} />;
+    }
+    if (route.name === 'play') {
+      const area = findArea(route.areaId);
+      const activity = findActivity(route.areaId, route.activityId);
+      const Play = ACTIVITIES[starKey(route.areaId, route.activityId)];
+      if (area && activity && Play) return <Play area={area} activity={activity} profile={current} />;
     }
     if (route.name === 'reward') {
       const area = findArea(route.areaId);

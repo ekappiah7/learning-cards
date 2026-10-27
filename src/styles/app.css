@@ -330,6 +330,136 @@ button { cursor: pointer; touch-action: manipulation; }
 
 .empty-note { font-size: var(--text-xl); color: var(--text-secondary); text-align: center; }
 
+/* ---------- Activity frame ---------- */
+
+.activity-page { gap: var(--space-5); }
+
+.chips { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+.chip-btn {
+  min-height: 64px;
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-full);
+  border: 1.5px solid var(--line-strong);
+  background: transparent;
+  color: var(--text-primary);
+  font-size: var(--text-xl);
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background var(--duration-fast) var(--ease-standard);
+}
+.chip-btn:hover { background: var(--line-subtle); }
+.chip-btn[aria-pressed='true'] { background: var(--action-bg); color: var(--action-fg); border-color: var(--action-bg); }
+
+.activity-card {
+  background: var(--surface-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-5) var(--space-6) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+  position: relative;
+  overflow: hidden;
+}
+.activity-card::before,
+.activity-card::after {
+  content: '';
+  position: absolute;
+  border: 1px solid var(--geometry);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.activity-card::before { width: 360px; height: 360px; right: -140px; top: -160px; }
+.activity-card::after { width: 240px; height: 240px; left: -110px; bottom: -120px; }
+.card-corner { position: absolute; top: var(--space-4); right: var(--space-4); z-index: 2; }
+.activity-card.is-wrong { animation: wobble 0.5s var(--ease-standard); }
+
+.pips { display: flex; gap: var(--space-2); }
+.pips span {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid var(--line-strong);
+  transition: background var(--duration-normal) var(--ease-standard);
+}
+.pips span.now { transform: scale(1.25); }
+
+.message {
+  min-height: 40px;
+  font-family: var(--font-display);
+  font-size: clamp(var(--text-2xl), 4vw, var(--text-3xl));
+  font-weight: 700;
+  color: var(--text-heading);
+  text-align: center;
+}
+.is-right .message { animation: pop var(--duration-slow) var(--ease-decelerate); }
+
+.main-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-4); position: relative; z-index: 1; }
+.pill.big { min-height: 88px; padding: var(--space-4) var(--space-16); font-size: var(--text-3xl); }
+
+.activity-nav {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+  margin: calc(-1 * var(--space-4)) calc(-1 * var(--space-5)) calc(-1 * var(--space-12));
+  padding: var(--space-4) var(--space-5) var(--space-5);
+  background: var(--surface-base);
+  border-top: 1px solid var(--line-subtle);
+}
+.activity-nav .hint { font-size: var(--text-lg); color: var(--text-secondary); text-align: center; }
+
+/* ---------- Clap activities ---------- */
+
+.clap-item {
+  background: none;
+  border: none;
+  padding: 0;
+  max-width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: baseline;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--text-heading);
+  position: relative;
+  z-index: 1;
+}
+.clap-item.syllables {
+  gap: var(--space-1);
+  font-size: clamp(var(--text-5xl), min(13vw, 15vh), 136px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.clap-item.words {
+  column-gap: clamp(var(--space-4), 3vw, var(--space-8));
+  row-gap: var(--space-2);
+  font-size: clamp(var(--text-4xl), min(9vw, 11vh), var(--text-6xl));
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+.clap-item .part { display: flex; align-items: baseline; gap: var(--space-1); transition: color var(--duration-fast) var(--ease-standard); }
+.clap-item.words .part { border-bottom: 5px solid transparent; padding-bottom: var(--space-1); }
+.clap-item .sep { color: var(--cream-300); font-weight: 400; }
+
+.clap-dots { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-4); min-height: 72px; }
+.clap-dots span {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 2.5px dashed var(--line-strong);
+  transition: background var(--duration-fast) var(--ease-standard);
+}
+.clap-dots.words span { width: 64px; height: 64px; }
+.clap-dots span.pop { animation: clap-pop 0.35s var(--ease-standard); }
+@keyframes clap-pop { 0% { transform: scale(1); } 40% { transform: scale(1.25); } 100% { transform: scale(1); } }
+
 /* ---------- Motion ---------- */
 
 @keyframes pop {
@@ -356,4 +486,31 @@ button { cursor: pointer; touch-action: manipulation; }
   .icon-btn { width: 64px; height: 64px; }
   .topbar-slot { min-width: 64px; }
   .avatar { width: 112px; height: 112px; font-size: var(--text-4xl); }
+  .pill { padding: var(--space-4) var(--space-6); }
+  .pill.big { padding: var(--space-4) var(--space-12); }
+  .activity-nav { margin: calc(-1 * var(--space-2)) calc(-1 * var(--space-4)) calc(-1 * var(--space-10)); padding: var(--space-3) var(--space-4) var(--space-4); }
+  .clap-dots span { width: 64px; height: 64px; }
+  .clap-dots.words span { width: 52px; height: 52px; }
+}
+@media (max-width: 900px) {
+  .activity-nav .hint { display: none; }
+}
+
+/* Short landscape screens (iPad sideways, laptops): keep the whole
+   activity, including the pinned Back / Next bar, on one screen. */
+@media (max-height: 860px) {
+  .activity-page { padding-top: var(--space-3); gap: var(--space-4); }
+  .activity-page .topbar { min-height: 64px; }
+  .activity-page .eyebrow { display: none; }
+  .activity-page .title { font-size: var(--text-3xl); }
+  .activity-page .topbar .icon-btn:not(.small) { width: 64px; height: 64px; }
+  .activity-page .pips { position: absolute; top: var(--space-5); left: var(--space-6); }
+  .activity-card { padding-top: var(--space-10); }
+  .card-corner { top: auto; bottom: var(--space-6); right: var(--space-6); width: 80px; height: 80px; }
+  .clap-item.syllables { font-size: clamp(var(--text-4xl), min(13vw, 13vh), 136px); }
+  .clap-item.words { font-size: clamp(var(--text-3xl), min(9vw, 9vh), var(--text-6xl)); }
+  .clap-dots { min-height: 64px; }
+  .clap-dots span { width: 64px; height: 64px; }
+  .clap-dots.words span { width: 56px; height: 56px; }
+  .pill.big { min-height: 80px; }
 }

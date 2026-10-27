@@ -7,6 +7,7 @@ export type Route =
   | { name: 'profiles' }
   | { name: 'home' }
   | { name: 'area'; areaId: string }
+  | { name: 'play'; areaId: string; activityId: string }
   | { name: 'reward'; areaId: string; activityId: string };
 
 export function parse(hash: string): Route {
@@ -17,8 +18,9 @@ export function parse(hash: string): Route {
     case 'area':
       if (parts[1]) return { name: 'area', areaId: parts[1] };
       break;
+    case 'play':
     case 'reward':
-      if (parts[1] && parts[2]) return { name: 'reward', areaId: parts[1], activityId: parts[2] };
+      if (parts[1] && parts[2]) return { name: parts[0] as 'play' | 'reward', areaId: parts[1], activityId: parts[2] };
       break;
   }
   return { name: 'profiles' };
@@ -32,8 +34,9 @@ export function href(route: Route): string {
       return '#/home';
     case 'area':
       return `#/area/${encodeURIComponent(route.areaId)}`;
+    case 'play':
     case 'reward':
-      return `#/reward/${encodeURIComponent(route.areaId)}/${encodeURIComponent(route.activityId)}`;
+      return `#/${route.name}/${encodeURIComponent(route.areaId)}/${encodeURIComponent(route.activityId)}`;
   }
 }
 
