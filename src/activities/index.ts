@@ -5,6 +5,7 @@ import { ClapSentences, ClapWords } from './Clap';
 import { FirstSound } from './FirstSound';
 import { Adding, CountDots, MoreOrFewer, NumberLine } from './Numbers';
 import { SoundItOut } from './SoundItOut';
+import { OddOneOut, Patterns, Sorting } from './Thinking';
 
 export type ActivityProps = { area: Area; activity: Activity; profile: Profile };
 
@@ -19,4 +20,7 @@ export const ACTIVITIES: Record<string, ComponentType<ActivityProps>> = {
   'numbers/more-fewer': MoreOrFewer,
   'numbers/number-line': NumberLine,
   'numbers/adding': Adding,
+  'logic/patterns': Patterns,
+  'logic/odd-one-out': OddOneOut,
+  'logic/sorting': Sorting,
 };

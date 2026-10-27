@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { speak } from '../speech';
 
 // Shared pick-the-answer logic: a wrong choice wobbles and says "Try
@@ -50,8 +50,10 @@ export function useSayOnShow(text: string, card?: number) {
   }, [text, card]);
 }
 
+// `render` draws a tile's content (a shape, say); by default the value is
+// shown as text.
 export function ChoiceTiles({
-  options, answer, solved, wrong, color, label, onChoose,
+  options, answer, solved, wrong, color, label, onChoose, render, className = 'letter-tile',
 }: {
   options: string[];
   answer: string;
@@ -60,6 +62,8 @@ export function ChoiceTiles({
   color: string;
   label: (value: string) => string;
   onChoose: (value: string) => void;
+  render?: (value: string) => ReactNode;
+  className?: string;
 }) {
   return (
     <div className="letter-row">
@@ -70,12 +74,12 @@ export function ChoiceTiles({
           <button
             key={shaking ? `${v}-${wrong.n}` : v}
             type="button"
-            className={`letter-tile${lit ? ' lit' : ''}${shaking ? ' wobble' : ''}`}
+            className={`${className}${lit ? ' lit' : ''}${shaking ? ' wobble' : ''}`}
             style={lit ? { background: color, borderColor: color } : undefined}
             aria-label={label(v)}
             onClick={() => onChoose(v)}
           >
-            {v}
+            {render ? render(v) : v}
           </button>
         );
       })}
