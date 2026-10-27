@@ -460,6 +460,47 @@ button { cursor: pointer; touch-action: manipulation; }
 .clap-dots span.pop { animation: clap-pop 0.35s var(--ease-standard); }
 @keyframes clap-pop { 0% { transform: scale(1); } 40% { transform: scale(1.25); } 100% { transform: scale(1); } }
 
+/* ---------- Letter tiles and pictures ---------- */
+
+.letter-row { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-5); position: relative; z-index: 1; }
+.letter-tile {
+  width: 136px;
+  height: 152px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--line-strong);
+  background: var(--surface-base);
+  box-shadow: var(--shadow-md);
+  font-family: var(--font-heading);
+  font-size: var(--text-6xl);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text-heading);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--duration-fast) var(--ease-standard), transform var(--duration-fast) var(--ease-standard);
+}
+.letter-tile:active { transform: scale(0.96); }
+.letter-tile.lit { color: var(--plum-950); }
+.letter-tile.saying { transform: translateY(-8px) scale(1.06); box-shadow: var(--shadow-lg); }
+.letter-tile.wobble { animation: wobble 0.5s var(--ease-standard); }
+
+.picture-slot {
+  width: 152px;
+  height: 152px;
+  border-radius: 50%;
+  border: 2.5px dashed var(--line-strong);
+  background: transparent;
+  color: var(--text-heading);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+.picture-slot.shown { border-style: solid; border-width: 1.5px; background: var(--surface-base); animation: pop var(--duration-slow) var(--ease-decelerate); }
+.picture-word { font-size: var(--text-3xl); font-weight: 700; }
+
 /* ---------- Motion ---------- */
 
 @keyframes pop {
@@ -491,6 +532,7 @@ button { cursor: pointer; touch-action: manipulation; }
   .activity-nav { margin: calc(-1 * var(--space-2)) calc(-1 * var(--space-4)) calc(-1 * var(--space-10)); padding: var(--space-3) var(--space-4) var(--space-4); }
   .clap-dots span { width: 64px; height: 64px; }
   .clap-dots.words span { width: 52px; height: 52px; }
+  .letter-tile { width: 96px; height: 112px; font-size: var(--text-5xl); }
 }
 @media (max-width: 900px) {
   .activity-nav .hint { display: none; }
@@ -513,4 +555,7 @@ button { cursor: pointer; touch-action: manipulation; }
   .clap-dots span { width: 64px; height: 64px; }
   .clap-dots.words span { width: 56px; height: 56px; }
   .pill.big { min-height: 80px; }
+  .letter-tile { width: 112px; height: 124px; font-size: var(--text-5xl); }
+  .picture-slot { width: 120px; height: 120px; }
+  .picture-slot svg { width: 80px; height: 80px; }
 }

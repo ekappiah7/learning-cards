@@ -2,6 +2,8 @@ import type { ComponentType } from 'react';
 import type { Activity, Area } from '../data/areas';
 import type { Profile } from '../store';
 import { ClapSentences, ClapWords } from './Clap';
+import { FirstSound } from './FirstSound';
+import { SoundItOut } from './SoundItOut';
 
 export type ActivityProps = { area: Area; activity: Activity; profile: Profile };
 
@@ -10,4 +12,6 @@ export type ActivityProps = { area: Area; activity: Activity; profile: Profile }
 export const ACTIVITIES: Record<string, ComponentType<ActivityProps>> = {
   'reading/clap-words': ClapWords,
   'reading/clap-sentences': ClapSentences,
+  'reading/sound-it-out': SoundItOut,
+  'reading/first-sound': FirstSound,
 };

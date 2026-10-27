@@ -3,7 +3,8 @@ import { Hand, Play } from 'lucide-react';
 import { moduleVar, type ModuleColor } from '../data/areas';
 import { CLAP_SENTENCES, CLAP_WORDS } from '../data/reading';
 import { speak, stop } from '../speech';
-import { ActivityFrame, Chips, ROUND_SIZE, useRound } from '../components/ActivityFrame';
+import { ActivityFrame, Chips, useRound } from '../components/ActivityFrame';
+import { pickRound } from './util';
 import type { ActivityProps } from './index';
 
 // Port of the Clap Words and Clap Sentences prototypes (reference/*.dc.html).
@@ -73,20 +74,6 @@ const SENTENCES: ClapConfig = {
   demoRate: 0.75,
 };
 
-const shuffle = <T,>(a: T[]) => {
-  const b = a.slice();
-  for (let i = b.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [b[i], b[j]] = [b[j], b[i]];
-  }
-  return b;
-};
-
-// A round takes up to ROUND_SIZE items from the pool, easiest first.
-function pickRound(pool: string[][]) {
-  return shuffle(pool).slice(0, ROUND_SIZE).sort((a, b) => a.length - b.length);
-}
-
 const clean = (part: string) => part.replace(/[.,!?]/g, '');
 
 export const ClapWords = (props: ActivityProps) => <Clap {...props} config={WORDS} />;
@@ -100,7 +87,7 @@ function Clap({ area, activity, profile, config: c }: ActivityProps & { config: 
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   // seed only exists to draw a fresh round when Shuffle is pressed.
-  const round = useMemo(() => pickRound(c.items.filter(i => c.filters[filter].test(i.length))), [c, filter, seed]);
+  const round = useMemo(() => pickRound(c.items.filter(i => c.filters[filter].test(i.length)), i => i.length), [c, filter, seed]);
   const { index, next, prev, restart } = useRound(area, activity, round.length);
   const item = round[index];
   const n = item.length;
