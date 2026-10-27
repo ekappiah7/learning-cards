@@ -3,6 +3,7 @@ import type { Activity, Area } from '../data/areas';
 import type { Profile } from '../store';
 import { ClapSentences, ClapWords } from './Clap';
 import { FirstSound } from './FirstSound';
+import { Adding, CountDots, MoreOrFewer, NumberLine } from './Numbers';
 import { SoundItOut } from './SoundItOut';
 
 export type ActivityProps = { area: Area; activity: Activity; profile: Profile };
@@ -14,4 +15,8 @@ export const ACTIVITIES: Record<string, ComponentType<ActivityProps>> = {
   'reading/clap-sentences': ClapSentences,
   'reading/sound-it-out': SoundItOut,
   'reading/first-sound': FirstSound,
+  'numbers/count-dots': CountDots,
+  'numbers/more-fewer': MoreOrFewer,
+  'numbers/number-line': NumberLine,
+  'numbers/adding': Adding,
 };
