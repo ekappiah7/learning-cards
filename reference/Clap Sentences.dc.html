@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/jakbrain-plum-cream-design-system-5dd070bb-8873-42a6-bb65-03f790e085ee/tokens/typography.css">
+<link rel="stylesheet" href="_ds/jakbrain-plum-cream-design-system-5dd070bb-8873-42a6-bb65-03f790e085ee/tokens/colors.css">
+<link rel="stylesheet" href="_ds/jakbrain-plum-cream-design-system-5dd070bb-8873-42a6-bb65-03f790e085ee/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/jakbrain-plum-cream-design-system-5dd070bb-8873-42a6-bb65-03f790e085ee/tokens/base.css">
+<link rel="stylesheet" href="_ds/jakbrain-plum-cream-design-system-5dd070bb-8873-42a6-bb65-03f790e085ee/styles.css">
+<script src="_ds/jakbrain-plum-cream-design-system-5dd070bb-8873-42a6-bb65-03f790e085ee/_ds_bundle.js"></script>
+<style>
+body{margin:0;background:#F6EFDF;font-family:'DM Sans',system-ui,sans-serif;color:#1C1119}
+a{color:#5A0B4D}a:hover{opacity:.8}
+button{font-family:inherit}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.25)}100%{transform:scale(1)}}
+</style>
+</helmet>
+<div style="min-height:100vh;box-sizing:border-box;padding:32px 20px 48px;display:flex;flex-direction:column;align-items:center;gap:24px;background-color:#F6EFDF;background-image:radial-gradient(rgba(168,120,26,0.28) 1.2px,transparent 1.2px);background-size:24px 24px">
+
+  <header style="width:100%;max-width:960px;display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px">
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;align-items:center;gap:12px"><span style="width:32px;height:1px;background:#A8781A"></span><span style="font-size:12px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:#5B4855">Clap the sentence</span></div>
+      <h1 style="margin:0;font-family:'Playfair Display',Georgia,serif;font-size:40px;line-height:1.1;color:#5A0B4D">How many <em>words?</em></h1>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px">
+      <sc-for list="{{ filters }}" as="f" hint-placeholder-count="5">
+        <button onClick="{{ f.pick }}" style="border:1px solid #A8781A;border-radius:999px;padding:10px 18px;min-height:44px;font-size:15px;white-space:nowrap;flex-shrink:0;font-weight:600;cursor:pointer;background:{{ f.bg }};color:{{ f.fg }}">{{ f.label }}</button>
+      </sc-for>
+    </div>
+  </header>
+
+  <main style="width:100%;max-width:960px;box-sizing:border-box;background:#FCF8EF;border:1px solid rgba(168,120,26,0.6);border-radius:20px;box-shadow:0 12px 32px rgba(90,11,77,0.12);padding:40px 24px 36px;display:flex;flex-direction:column;align-items:center;gap:28px;position:relative;overflow:hidden">
+    <div style="position:absolute;width:360px;height:360px;border:1px solid rgba(168,120,26,0.3);border-radius:50%;right:-140px;top:-160px;pointer-events:none"></div>
+    <div style="position:absolute;width:240px;height:240px;border:1px solid rgba(168,120,26,0.3);border-radius:50%;left:-110px;bottom:-120px;pointer-events:none"></div>
+
+    <div style="font-size:14px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#5B4855">Card {{ pos }} of {{ total }}</div>
+
+    <button onClick="{{ say }}" title="Hear the sentence" style="background:none;border:none;cursor:pointer;padding:0;display:flex;flex-wrap:wrap;justify-content:center;align-items:baseline;column-gap:clamp(16px,3vw,32px);row-gap:8px;font-family:'DM Sans',system-ui,sans-serif;font-weight:700;font-size:clamp(44px,8vw,88px);line-height:1.1;letter-spacing:-0.01em;max-width:100%">
+      <sc-for list="{{ parts }}" as="p" hint-placeholder-count="4">
+        <span style="color:{{ p.color }};border-bottom:4px solid {{ p.line }};padding-bottom:4px;transition:color .2s cubic-bezier(0.4,0,0.2,1)">{{ p.text }}</span>
+      </sc-for>
+    </button>
+
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:16px;min-height:64px">
+      <sc-for list="{{ dots }}" as="d" hint-placeholder-count="4">
+        <div style="width:56px;height:56px;border-radius:50%;box-sizing:border-box;border:2px dashed {{ d.border }};background:{{ d.bg }};animation:{{ d.anim }};transition:background .2s cubic-bezier(0.4,0,0.2,1)"></div>
+      </sc-for>
+    </div>
+
+    <div style="min-height:40px;font-family:'Playfair Display',Georgia,serif;font-size:32px;font-weight:700;color:#5A0B4D;text-align:center">{{ message }}</div>
+
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:12px">
+      <button onClick="{{ clap }}" style="background:#5A0B4D;color:#F6EFDF;border:none;border-radius:999px;padding:18px 44px;min-height:64px;font-size:24px;font-weight:700;cursor:pointer;box-shadow:0 6px 16px rgba(90,11,77,0.25)" style-hover="background:#47083D" style-active="transform:scale(0.97)">Clap</button>
+      <button onClick="{{ play }}" style="background:transparent;color:#1C1119;border:1.5px solid #A8781A;border-radius:999px;padding:18px 32px;min-height:64px;font-size:20px;font-weight:600;cursor:pointer" style-hover="background:rgba(168,120,26,0.1)">Clap with me</button>
+      <button onClick="{{ reset }}" style="background:transparent;color:#5B4855;border:none;border-radius:999px;padding:18px 20px;min-height:64px;font-size:18px;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:4px">Again</button>
+    </div>
+  </main>
+
+  <nav style="width:100%;max-width:960px;display:flex;justify-content:space-between;align-items:center;gap:12px">
+    <button onClick="{{ prev }}" style="background:transparent;color:#1C1119;border:1.5px solid #A8781A;border-radius:999px;padding:14px 28px;min-height:56px;font-size:18px;font-weight:600;cursor:pointer" style-hover="background:rgba(168,120,26,0.1)">← Back</button>
+    <a href="Clap Words.dc.html" style="font-size:14px;color:#5B4855;text-align:center">Clap words instead</a>
+    <button onClick="{{ next }}" style="background:#5A0B4D;color:#F6EFDF;border:none;border-radius:999px;padding:14px 28px;min-height:56px;font-size:18px;font-weight:600;cursor:pointer" style-hover="background:#47083D">Next →</button>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showCount&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Learning&quot;},&quot;speak&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Learning&quot;},&quot;sayEachWord&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Learning&quot;}}">
+const SENTENCES = [
+  'The girl is ill.', 'I am ill.', 'The boy is sad.', 'The sun is hot.', 'I see a cat.', 'The dog can run.',
+  'Mum has a hat.', 'Dad is in bed.', 'The bus is red.', 'A fish can swim.', 'The cup is big.', 'Look at the frog.',
+  'The girl is in bed.', 'My cat is fat.', 'We like to play.', 'The pig is in the mud.', 'She has a red ball.',
+  'The boy can kick the ball.', 'I can see the big tree.', 'The girl is ill and sad.', 'Mum gave the girl a drink.'
+].map(s => s.split(' '));
+const COLORS = ['#E8634A','#3ECFB2','#7C6FE8','#E8963A','#4BAFD6','#4CAF7D','#D45B8A'];
+const NUM = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven'];
+const shuffle = a => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+
+class Component extends DCLogic {
+  state = { filter: 0, i: 0, claps: 0, popKey: 0, order: null };
+  componentDidMount() {
+    this.onKey = e => {
+      if (e.code === 'Space') { e.preventDefault(); this.clap(); }
+      else if (e.key === 'ArrowRight') this.go(1);
+      else if (e.key === 'ArrowLeft') this.go(-1);
+    };
+    window.addEventListener('keydown', this.onKey);
+  }
+  componentWillUnmount() { window.removeEventListener('keydown', this.onKey); clearTimeout(this.t); }
+  list() {
+    const base = this.state.order || SENTENCES;
+    const f = this.state.filter;
+    return f ? base.filter(s => (f === 6 ? s.length >= 6 : s.length === f)) : base;
+  }
+  sent() { const l = this.list(); return l[this.state.i % l.length]; }
+  voice() { return this.props.speak ?? true; }
+  speak(text, rate = 0.8) {
+    try { const u = new SpeechSynthesisUtterance(text); u.rate = rate; u.pitch = 1.1; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch (e) {}
+  }
+  clap = () => {
+    clearTimeout(this.t);
+    const s = this.sent();
+    if (this.state.claps >= s.length) return;
+    const claps = this.state.claps + 1;
+    this.setState({ claps, popKey: this.state.popKey + 1 });
+    if (this.voice()) {
+      if (claps === s.length) this.t = setTimeout(() => this.speak(s.join(' ')), 400);
+      else if (this.props.sayEachWord ?? true) this.speak(s[claps - 1].replace('.', ''), 0.8);
+    }
+  };
+  play = () => {
+    clearTimeout(this.t);
+    const s = this.sent();
+    this.setState({ claps: 0 });
+    const step = k => {
+      if (k >= s.length) { if (this.voice()) this.speak(s.join(' ')); return; }
+      this.setState({ claps: k + 1, popKey: this.state.popKey + 1 });
+      if (this.voice()) this.speak(s[k].replace('.', ''), 0.75);
+      this.t = setTimeout(() => step(k + 1), 850);
+    };
+    this.t = setTimeout(() => step(0), 300);
+  };
+  go = d => {
+    clearTimeout(this.t);
+    const l = this.list().length;
+    this.setState(s => ({ i: (s.i + d + l) % l, claps: 0 }));
+  };
+  renderVals() {
+    const s = this.sent();
+    const n = s.length;
+    const { claps, filter } = this.state;
+    const done = claps >= n;
+    const parts = s.map((w, k) => ({
+      text: w,
+      color: k < claps ? COLORS[k % COLORS.length] : '#5A0B4D',
+      line: k < claps ? COLORS[k % COLORS.length] : 'transparent'
+    }));
+    const showCount = this.props.showCount ?? true;
+    const slots = showCount ? n : Math.max(claps, 1);
+    const dots = Array.from({ length: slots }, (_, k) => ({
+      bg: k < claps ? COLORS[k % COLORS.length] : 'transparent',
+      border: k < claps ? COLORS[k % COLORS.length] : '#A8781A',
+      anim: k === claps - 1 ? 'pop .35s cubic-bezier(0.4,0,0.2,1)' : 'none'
+    }));
+    const message = done ? `${NUM[n]} words!` : (claps ? `${claps}…` : 'Read it and clap each word');
+    const filters = [['All', 0], ['3 words', 3], ['4 words', 4], ['5 words', 5], ['6+ words', 6]].map(([label, v]) => ({
+      label,
+      bg: filter === v ? '#5A0B4D' : 'transparent',
+      fg: filter === v ? '#F6EFDF' : '#1C1119',
+      pick: () => { clearTimeout(this.t); this.setState({ filter: v, i: 0, claps: 0 }); }
+    }));
+    filters.push({ label: 'Shuffle', bg: 'transparent', fg: '#1C1119', pick: () => this.setState({ order: shuffle(SENTENCES), i: 0, claps: 0 }) });
+    return {
+      parts, dots, message, filters,
+      pos: (this.state.i % this.list().length) + 1, total: this.list().length,
+      clap: this.clap, play: this.play,
+      say: () => this.speak(s.join(' ')),
+      reset: () => { clearTimeout(this.t); this.setState({ claps: 0 }); },
+      prev: () => this.go(-1), next: () => this.go(1)
+    };
+  }
+}
+</script>
+</body>
+</html>

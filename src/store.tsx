@@ -1,0 +1,113 @@
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import type { ModuleColor } from './data/areas';
+import { setVoiceEnabled } from './speech';
+
+// All app state lives in localStorage on this device. Nothing is sent anywhere.
+
+export type Profile = {
+  id: string;
+  name: string;
+  color: ModuleColor;
+  stars: Record<string, number>; // key: `${areaId}/${activityId}`
+};
+
+export type Settings = {
+  voice: boolean;
+  levels: Record<string, number>; // difficulty per area, 1 (easy) to 3
+};
+
+type Saved = { version: 1; profiles: Profile[]; currentId: string | null; settings: Settings };
+
+const KEY = 'learning-cards:v1';
+const EMPTY: Saved = { version: 1, profiles: [], currentId: null, settings: { voice: true, levels: {} } };
+
+function load(): Saved {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (!raw) return EMPTY;
+    const data = JSON.parse(raw) as Saved;
+    if (data?.version !== 1 || !Array.isArray(data.profiles)) return EMPTY;
+    return { ...EMPTY, ...data, settings: { ...EMPTY.settings, ...data.settings } };
+  } catch {
+    return EMPTY;
+  }
+}
+
+function save(data: Saved) {
+  try {
+    localStorage.setItem(KEY, JSON.stringify(data));
+  } catch {
+    /* storage may be blocked; the app still works for this visit */
+  }
+}
+
+const newId = () => Math.random().toString(36).slice(2, 10);
+
+export const starKey = (areaId: string, activityId: string) => `${areaId}/${activityId}`;
+export const totalStars = (p: Profile) => Object.values(p.stars).reduce((a, b) => a + b, 0);
+
+type Store = {
+  profiles: Profile[];
+  current: Profile | null;
+  settings: Settings;
+  addProfile: (name: string, color: ModuleColor) => Profile;
+  updateProfile: (id: string, patch: Partial<Pick<Profile, 'name' | 'color'>>) => void;
+  selectProfile: (id: string | null) => void;
+  awardStar: (areaId: string, activityId: string) => void;
+  setSettings: (patch: Partial<Settings>) => void;
+};
+
+const Ctx = createContext<Store | null>(null);
+
+export function StoreProvider({ children }: { children: ReactNode }) {
+  const [data, setData] = useState<Saved>(load);
+
+  useEffect(() => save(data), [data]);
+  useEffect(() => setVoiceEnabled(data.settings.voice), [data.settings.voice]);
+
+  const addProfile = useCallback((name: string, color: ModuleColor) => {
+    const p: Profile = { id: newId(), name: name.trim(), color, stars: {} };
+    setData(d => ({ ...d, profiles: [...d.profiles, p] }));
+    return p;
+  }, []);
+
+  const updateProfile = useCallback((id: string, patch: Partial<Pick<Profile, 'name' | 'color'>>) => {
+    setData(d => ({ ...d, profiles: d.profiles.map(p => (p.id === id ? { ...p, ...patch } : p)) }));
+  }, []);
+
+  const selectProfile = useCallback((id: string | null) => setData(d => ({ ...d, currentId: id })), []);
+
+  const awardStar = useCallback((areaId: string, activityId: string) => {
+    const k = starKey(areaId, activityId);
+    setData(d => ({
+      ...d,
+      profiles: d.profiles.map(p => (p.id === d.currentId ? { ...p, stars: { ...p.stars, [k]: (p.stars[k] ?? 0) + 1 } } : p)),
+    }));
+  }, []);
+
+  const setSettings = useCallback((patch: Partial<Settings>) => {
+    setData(d => ({ ...d, settings: { ...d.settings, ...patch } }));
+  }, []);
+
+  const value = useMemo<Store>(
+    () => ({
+      profiles: data.profiles,
+      current: data.profiles.find(p => p.id === data.currentId) ?? null,
+      settings: data.settings,
+      addProfile,
+      updateProfile,
+      selectProfile,
+      awardStar,
+      setSettings,
+    }),
+    [data, addProfile, updateProfile, selectProfile, awardStar, setSettings],
+  );
+
+  return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
+}
+
+export function useStore() {
+  const s = useContext(Ctx);
+  if (!s) throw new Error('useStore must be used inside StoreProvider');
+  return s;
+}

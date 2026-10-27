@@ -1,0 +1,19 @@
+body {
+  margin: 0;
+  background: var(--surface-base);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--text-emphasis); text-decoration-color: var(--line-strong); text-underline-offset: 3px; }
+a:hover { opacity: 0.8; }
+code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  padding: 2px 6px;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--line-subtle);
+  color: var(--text-emphasis);
+}

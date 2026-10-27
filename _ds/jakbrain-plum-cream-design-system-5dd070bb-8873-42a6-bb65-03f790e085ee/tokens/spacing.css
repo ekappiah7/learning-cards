@@ -1,0 +1,30 @@
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+
+  --shadow-sm: 0 1px 4px var(--shadow-color);
+  --shadow-md: 0 4px 16px var(--shadow-color);
+  --shadow-lg: 0 8px 32px var(--shadow-color);
+
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1); /* @kind other */
+  --ease-decelerate: cubic-bezier(0, 0, 0.2, 1); /* @kind other */
+  --duration-fast: 150ms; /* @kind other */
+  --duration-normal: 300ms; /* @kind other */
+  --duration-slow: 600ms; /* @kind other */
+}

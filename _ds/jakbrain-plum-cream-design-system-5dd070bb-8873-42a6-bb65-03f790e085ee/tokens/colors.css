@@ -1,0 +1,79 @@
+/* Plum & Cream — colour tokens. Gold = lines & geometry only, never text. */
+:root {
+  --plum-950: #24031F;
+  --plum-900: #36052E;
+  --plum-800: #47083D;
+  --plum-700: #5A0B4D; /* base, sampled from reference */
+  --plum-600: #6C1A5E;
+  --plum-500: #822E73;
+  --plum-300: #B98BAE;
+  --plum-100: #EBDCE6;
+
+  --cream-50: #FCF8EF;
+  --cream-100: #F6EFDF; /* base */
+  --cream-200: #ECE1C9;
+  --cream-300: #DDCCA9;
+
+  --gold-500: #D4A843; /* lines on plum */
+  --gold-700: #A8781A; /* lines on cream */
+
+  --ink-900: #1C1119;
+  --ink-600: #5B4855;
+  --mist-200: #DCC8D2; /* secondary text on plum */
+  --mist-400: #B898AD; /* muted text on plum */
+
+  /* Module signatures (unchanged from v1) — geometry/fills only */
+  --module-1: #D4A843;
+  --module-2: #3ECFB2;
+  --module-3: #7C6FE8;
+  --module-4: #4CAF7D;
+  --module-5: #4BAFD6;
+  --module-6: #E8634A;
+  --module-7: #D45B8A;
+  --module-8: #E8963A;
+
+  /* Semantic — plum (dark) theme is the default */
+  --surface-base: var(--plum-700);
+  --surface-sunken: var(--plum-800);
+  --surface-deep: var(--plum-950);
+  --surface-raised: var(--plum-600);
+  --surface-overlay: var(--plum-500);
+  --text-primary: var(--cream-100);
+  --text-heading: var(--cream-100);
+  --text-secondary: var(--mist-200);
+  --text-muted: var(--mist-400);
+  --text-emphasis: var(--cream-50);
+  --line: rgba(212,168,67,0.55);
+  --line-strong: #D4A843;
+  --line-subtle: rgba(212,168,67,0.22);
+  --geometry: rgba(212,168,67,0.28);
+  --action-bg: var(--cream-100);
+  --action-bg-hover: var(--cream-50);
+  --action-fg: var(--plum-700);
+  --track: rgba(246,239,223,0.15);
+  --fill: #D4A843;
+  --shadow-color: rgba(36,3,31,0.5);
+}
+
+[data-theme="cream"] {
+  --surface-base: var(--cream-100);
+  --surface-sunken: var(--cream-200);
+  --surface-deep: var(--cream-300);
+  --surface-raised: var(--cream-50);
+  --surface-overlay: #FFFFFF;
+  --text-primary: var(--ink-900);
+  --text-heading: var(--plum-700);
+  --text-secondary: var(--ink-600);
+  --text-muted: var(--ink-600);
+  --text-emphasis: var(--plum-700);
+  --line: rgba(168,120,26,0.6);
+  --line-strong: #A8781A;
+  --line-subtle: rgba(168,120,26,0.25);
+  --geometry: rgba(168,120,26,0.3);
+  --action-bg: var(--plum-700);
+  --action-bg-hover: var(--plum-800);
+  --action-fg: var(--cream-100);
+  --track: rgba(90,11,77,0.12);
+  --fill: var(--plum-700);
+  --shadow-color: rgba(90,11,77,0.12);
+}
