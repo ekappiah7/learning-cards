@@ -7,14 +7,16 @@ import { Profiles } from './screens/Profiles';
 import { Home } from './screens/Home';
 import { AreaPage } from './screens/AreaPage';
 import { Reward } from './screens/Reward';
+import { Parent } from './screens/Parent';
 import { ACTIVITIES } from './activities';
 
 export function App() {
   const route = useRoute();
   const { current } = useStore();
 
-  // Every screen past "Who's playing?" needs a chosen player.
-  const needsProfile = route.name !== 'profiles' && !current;
+  // Every screen past "Who's playing?" needs a chosen player, except the
+  // parent corner.
+  const needsProfile = route.name !== 'profiles' && route.name !== 'parent' && !current;
   useEffect(() => {
     if (needsProfile) navigate({ name: 'profiles' });
   }, [needsProfile]);
@@ -27,6 +29,7 @@ export function App() {
   );
 
   function screen() {
+    if (route.name === 'parent') return <Parent />;
     if (route.name === 'profiles' || !current) return <Profiles />;
     if (route.name === 'area') {
       const area = findArea(route.areaId);

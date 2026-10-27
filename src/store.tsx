@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import type { ModuleColor } from './data/areas';
+import type { Level, ModuleColor } from './data/areas';
 import { setVoiceEnabled } from './speech';
 
 // All app state lives in localStorage on this device. Nothing is sent anywhere.
@@ -104,6 +104,12 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
+}
+
+// The difficulty level chosen for an area in the parent corner.
+export function useLevel(areaId: string): Level {
+  const l = useStore().settings.levels[areaId];
+  return l === 1 || l === 3 ? l : 2;
 }
 
 export function useStore() {

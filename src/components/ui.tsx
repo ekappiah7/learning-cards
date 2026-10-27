@@ -1,6 +1,6 @@
-import type { ReactNode } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
 import {
-  ArrowLeft, AudioLines, BookOpen, Brush, CircleDot, Copy, Ear, Gamepad2, Hand, Hash, Layers,
+  ArrowLeft, AudioLines, BookOpen, Brush, CircleDot, Copy, Ear, Gamepad2, Hand, Hash, Layers, Lock,
   MessageSquareText, MoveRight, Music, Plus, Puzzle, Scale, SearchX, Shapes, Volume2,
   type LucideProps,
 } from 'lucide-react';
@@ -88,5 +88,59 @@ export function StarShape({ size, filled = true, color, className }: { size: num
         strokeLinejoin="round"
       />
     </svg>
+  );
+}
+
+// How long a grown-up must press to open the parent corner.
+const HOLD_MS = 2000;
+
+// A lock button that only opens after a long press, with a ring that fills
+// while it is held. A quick tap just says "Ask a grown-up".
+export function HoldToOpen({ label, onOpen }: { label: string; onOpen: () => void }) {
+  const [holding, setHolding] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const opened = useRef(false);
+
+  const start = () => {
+    clearTimeout(timer.current);
+    opened.current = false;
+    setHolding(true);
+    timer.current = setTimeout(() => {
+      opened.current = true;
+      setHolding(false);
+      onOpen();
+    }, HOLD_MS);
+  };
+  const cancel = () => {
+    clearTimeout(timer.current);
+    setHolding(false);
+  };
+
+  return (
+    <button
+      type="button"
+      className={`icon-btn hold-btn${holding ? ' holding' : ''}`}
+      aria-label={`${label}. Press and hold.`}
+      onPointerDown={start}
+      onPointerUp={cancel}
+      onPointerLeave={cancel}
+      onPointerCancel={cancel}
+      onContextMenu={e => e.preventDefault()}
+      onKeyDown={e => {
+        if ((e.key === 'Enter' || e.key === ' ') && !e.repeat) {
+          e.preventDefault();
+          start();
+        }
+      }}
+      onKeyUp={cancel}
+      onClick={() => {
+        if (!opened.current) speak('Ask a grown-up');
+      }}
+    >
+      <svg className="hold-ring" viewBox="0 0 80 80" aria-hidden>
+        <circle cx="40" cy="40" r="37" />
+      </svg>
+      <Lock size={32} strokeWidth={1.5} aria-hidden />
+    </button>
   );
 }

@@ -3,6 +3,7 @@ import { ListOrdered, Rabbit, Volume2 } from 'lucide-react';
 import { moduleVar, type ModuleColor } from '../data/areas';
 import { ADD, COMPARE, COUNT, NUMBER_CHOICES, NUMBER_LINE } from '../data/numbers';
 import { praise, speak, stop } from '../speech';
+import { useLevel } from '../store';
 import { ActivityFrame, ROUND_SIZE, useRound } from '../components/ActivityFrame';
 import { ChoiceTiles, useAnswer, useLater, useSayOnShow } from '../components/Choices';
 import { shuffle } from './util';
@@ -14,9 +15,9 @@ const range = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i)
 const rand = (a: number, b: number) => a + Math.floor(Math.random() * (b - a + 1));
 
 // The answer plus nearby numbers inside [min, max], shuffled.
-function numberChoices(answer: number, min: number, max: number) {
+function numberChoices(answer: number, min: number, max: number, count: number) {
   const near = shuffle(range(Math.max(min, answer - 3), Math.min(max, answer + 3)).filter(n => n !== answer));
-  return shuffle([answer, ...near.slice(0, NUMBER_CHOICES - 1)]).map(String);
+  return shuffle([answer, ...near.slice(0, count - 1)]).map(String);
 }
 
 type Timer = ReturnType<typeof setTimeout>;
@@ -70,10 +71,14 @@ const Speaker = () => <Volume2 size={40} strokeWidth={1.5} aria-hidden />;
 // ---------- Count the dots ----------
 
 export function CountDots({ area, activity, profile }: ActivityProps) {
-  const round = useMemo(
-    () => shuffle(range(COUNT.min, COUNT.max)).slice(0, ROUND_SIZE).sort((a, b) => a - b).map(n => ({ n, choices: numberChoices(n, COUNT.min, COUNT.max) })),
-    [],
-  );
+  const level = useLevel(area.id);
+  const round = useMemo(() => {
+    const { min, max } = COUNT[level];
+    return shuffle(range(min, max))
+      .slice(0, ROUND_SIZE)
+      .sort((a, b) => a - b)
+      .map(n => ({ n, choices: numberChoices(n, min, max, NUMBER_CHOICES[level]) }));
+  }, [level]);
   const { index, next, prev } = useRound(area, activity, round.length);
   const item = round[index];
   const color = moduleVar(area.color);
@@ -146,19 +151,21 @@ export function CountDots({ area, activity, profile }: ActivityProps) {
 type Side = 'left' | 'right';
 
 export function MoreOrFewer({ area, activity, profile }: ActivityProps) {
+  const level = useLevel(area.id);
   const round = useMemo(() => {
+    const cmp = COMPARE[level];
     const items = range(1, ROUND_SIZE).map(i => {
       let a = 0;
       let b = 0;
-      while (Math.abs(a - b) < Math.max(1, COMPARE.minGap)) {
-        a = rand(COMPARE.min, COMPARE.max);
-        b = rand(COMPARE.min, COMPARE.max);
+      while (Math.abs(a - b) < Math.max(1, cmp.minGap)) {
+        a = rand(cmp.min, cmp.max);
+        b = rand(cmp.min, cmp.max);
       }
       return { a, b, ask: (i % 2 ? 'more' : 'fewer') as 'more' | 'fewer' };
     });
     // Big differences are easier, so they come first.
     return items.sort((x, y) => Math.abs(y.a - y.b) - Math.abs(x.a - x.b));
-  }, []);
+  }, [level]);
   const { index, next, prev } = useRound(area, activity, round.length);
   const item = round[index];
   const { solved, wrong, check, reset } = useAnswer();
@@ -230,10 +237,12 @@ export function MoreOrFewer({ area, activity, profile }: ActivityProps) {
 // ---------- Number line hop ----------
 
 export function NumberLine({ area, activity, profile }: ActivityProps) {
+  const level = useLevel(area.id);
   const round = useMemo(() => {
+    const line = NUMBER_LINE[level];
     const span = 3; // numbers shown besides the blank
     const make = (ask: 'after' | 'before') => {
-      const start = rand(NUMBER_LINE.min, NUMBER_LINE.max - span);
+      const start = rand(line.min, line.max - span);
       const nodes = range(start, start + span);
       const blank = ask === 'after' ? span : 0;
       return { ask, nodes, blank, answer: nodes[blank], given: nodes[ask === 'after' ? span - 1 : 1] };
@@ -242,9 +251,9 @@ export function NumberLine({ area, activity, profile }: ActivityProps) {
     // "What comes after" is easier, so it comes first.
     return [...range(1, half).map(() => make('after')), ...range(1, ROUND_SIZE - half).map(() => make('before'))].map(it => ({
       ...it,
-      choices: numberChoices(it.answer, NUMBER_LINE.min, NUMBER_LINE.max),
+      choices: numberChoices(it.answer, line.min, line.max, NUMBER_CHOICES[level]),
     }));
-  }, []);
+  }, [level]);
   const { index, next, prev } = useRound(area, activity, round.length);
   const item = round[index];
   const color = moduleVar(area.color);
@@ -320,13 +329,15 @@ export function NumberLine({ area, activity, profile }: ActivityProps) {
 // ---------- Adding to ten ----------
 
 export function Adding({ area, activity, profile }: ActivityProps) {
+  const level = useLevel(area.id);
   const round = useMemo(() => {
-    const pairs = range(1, ADD.maxTotal - 1).flatMap(a => range(1, ADD.maxTotal - a).map(b => ({ a, b })));
+    const { maxTotal } = ADD[level];
+    const pairs = range(1, maxTotal - 1).flatMap(a => range(1, maxTotal - a).map(b => ({ a, b })));
     return shuffle(pairs)
       .slice(0, ROUND_SIZE)
       .sort((x, y) => x.a + x.b - (y.a + y.b))
-      .map(p => ({ ...p, sum: p.a + p.b, choices: numberChoices(p.a + p.b, 2, ADD.maxTotal) }));
-  }, []);
+      .map(p => ({ ...p, sum: p.a + p.b, choices: numberChoices(p.a + p.b, 2, maxTotal, NUMBER_CHOICES[level]) }));
+  }, [level]);
   const { index, next, prev } = useRound(area, activity, round.length);
   const item = round[index];
   const color = moduleVar(area.color);

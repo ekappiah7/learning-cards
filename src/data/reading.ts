@@ -1,5 +1,6 @@
 // Reading content. Edit these lists to add or change words and sentences.
 import type { PictureName } from '../components/pictures';
+import type { ByLevel } from './areas';
 
 // Syllables are split with |, so "ba|na|na" claps three times.
 export const CLAP_WORDS: string[] = [
@@ -55,6 +56,12 @@ export const FIRST_SOUND_WORDS: { word: string; picture: PictureName }[] = [
   { word: 'table', picture: 'table' }, { word: 'umbrella', picture: 'umbrella' }, { word: 'van', picture: 'van' },
   { word: 'watch', picture: 'watch' }, { word: 'worm', picture: 'worm' },
 ];
+
+// Difficulty settings for each level: Easy (1), Medium (2), Harder (3).
+export const CLAP_MAX_SYLLABLES: ByLevel<number> = { 1: 2, 2: 4, 3: 4 };
+export const CLAP_MAX_WORDS: ByLevel<number> = { 1: 4, 2: 99, 3: 99 };
+export const SOUND_IT_OUT_PICTURED_ONLY: ByLevel<boolean> = { 1: true, 2: false, 3: false };
+export const FIRST_SOUND_CHOICES: ByLevel<number> = { 1: 2, 2: 3, 3: 4 };
 
 // Letters offered as wrong choices in First sound.
 // k is left out because it sounds the same as c.

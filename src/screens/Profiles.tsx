@@ -4,7 +4,7 @@ import { PROFILE_COLORS, moduleVar, type ModuleColor } from '../data/areas';
 import { navigate } from '../router';
 import { speak } from '../speech';
 import { useStore } from '../store';
-import { TopBar } from '../components/ui';
+import { HoldToOpen, TopBar } from '../components/ui';
 
 export function Profiles() {
   const { profiles, addProfile, selectProfile } = useStore();
@@ -18,7 +18,12 @@ export function Profiles() {
 
   return (
     <div className="page fade-in">
-      <TopBar eyebrow="Learning cards" title={<>Who is <em>playing?</em></>} spoken="Who is playing?" />
+      <TopBar
+        eyebrow="Learning cards"
+        title={<>Who is <em>playing?</em></>}
+        spoken="Who is playing?"
+        right={<HoldToOpen label="Parent corner" onOpen={() => navigate({ name: 'parent' })} />}
+      />
 
       <div className="grid">
         {profiles.map(p => (
@@ -47,6 +52,7 @@ export function Profiles() {
 
       {adding && (
         <ProfileDialog
+          taken={profiles.map(p => p.color)}
           onCancel={() => setAdding(false)}
           onSave={(name, color) => {
             const p = addProfile(name, color);
@@ -63,18 +69,20 @@ export function Profiles() {
 export function ProfileDialog({
   initialName = '',
   initialColor,
+  taken = [],
   heading = 'New player',
   onSave,
   onCancel,
 }: {
   initialName?: string;
   initialColor?: ModuleColor;
+  taken?: ModuleColor[];        // colours other players use; the default avoids them
   heading?: string;
   onSave: (name: string, color: ModuleColor) => void;
   onCancel: () => void;
 }) {
   const [name, setName] = useState(initialName);
-  const [color, setColor] = useState<ModuleColor>(initialColor ?? PROFILE_COLORS[0]);
+  const [color, setColor] = useState<ModuleColor>(initialColor ?? PROFILE_COLORS.find(c => !taken.includes(c)) ?? PROFILE_COLORS[0]);
   const ok = name.trim().length > 0;
 
   return (

@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
 import { Volume2 } from 'lucide-react';
 import { moduleVar } from '../data/areas';
-import { FIRST_SOUND_LETTERS, FIRST_SOUND_WORDS, LETTER_SOUNDS } from '../data/reading';
+import { FIRST_SOUND_CHOICES, FIRST_SOUND_LETTERS, FIRST_SOUND_WORDS, LETTER_SOUNDS } from '../data/reading';
 import { praise, speak } from '../speech';
+import { useLevel } from '../store';
 import { ActivityFrame, useRound } from '../components/ActivityFrame';
 import { ChoiceTiles, useAnswer, useLater, useSayOnShow } from '../components/Choices';
 import { Picture } from '../components/pictures';
@@ -11,18 +12,21 @@ import type { ActivityProps } from './index';
 
 // Hear a word, see its picture, and tap the letter it starts with.
 
-const CHOICES = 3;
 // Letters that make the same first sound are never offered together.
 const SAME_SOUND: Record<string, string> = { c: 'k', k: 'c' };
 
-function choicesFor(word: string) {
+function choicesFor(word: string, count: number) {
   const first = word[0];
-  const others = shuffle(FIRST_SOUND_LETTERS.filter(l => l !== first && l !== SAME_SOUND[first])).slice(0, CHOICES - 1);
+  const others = shuffle(FIRST_SOUND_LETTERS.filter(l => l !== first && l !== SAME_SOUND[first])).slice(0, count - 1);
   return shuffle([first, ...others]);
 }
 
 export function FirstSound({ area, activity, profile }: ActivityProps) {
-  const round = useMemo(() => pickRound(FIRST_SOUND_WORDS).map(w => ({ ...w, choices: choicesFor(w.word) })), []);
+  const level = useLevel(area.id);
+  const round = useMemo(
+    () => pickRound(FIRST_SOUND_WORDS).map(w => ({ ...w, choices: choicesFor(w.word, FIRST_SOUND_CHOICES[level]) })),
+    [level],
+  );
   const { index, next, prev } = useRound(area, activity, round.length);
   const item = round[index];
   const answer = item.word[0];

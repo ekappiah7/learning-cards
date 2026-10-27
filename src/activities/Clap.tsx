@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Hand, Play } from 'lucide-react';
 import { moduleVar, type ModuleColor } from '../data/areas';
-import { CLAP_SENTENCES, CLAP_WORDS } from '../data/reading';
+import { CLAP_MAX_SYLLABLES, CLAP_MAX_WORDS, CLAP_SENTENCES, CLAP_WORDS } from '../data/reading';
 import { speak, stop } from '../speech';
+import { useLevel } from '../store';
 import { ActivityFrame, Chips, useRound } from '../components/ActivityFrame';
 import { pickRound } from './util';
 import type { ActivityProps } from './index';
@@ -80,6 +81,11 @@ export const ClapWords = (props: ActivityProps) => <Clap {...props} config={WORD
 export const ClapSentences = (props: ActivityProps) => <Clap {...props} config={SENTENCES} />;
 
 function Clap({ area, activity, profile, config: c }: ActivityProps & { config: ClapConfig }) {
+  // The level caps how long items get; chips with nothing left are hidden.
+  const level = useLevel(area.id);
+  const max = c.kind === 'syllables' ? CLAP_MAX_SYLLABLES[level] : CLAP_MAX_WORDS[level];
+  const items = useMemo(() => c.items.filter(i => i.length <= max), [c, max]);
+  const filters = useMemo(() => c.filters.filter(f => items.some(i => f.test(i.length))), [c, items]);
   const [filter, setFilter] = useState(0);
   const [seed, setSeed] = useState(0);
   const [claps, setClaps] = useState(0);
@@ -87,7 +93,7 @@ function Clap({ area, activity, profile, config: c }: ActivityProps & { config: 
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   // seed only exists to draw a fresh round when Shuffle is pressed.
-  const round = useMemo(() => pickRound(c.items.filter(i => c.filters[filter].test(i.length)), i => i.length), [c, filter, seed]);
+  const round = useMemo(() => pickRound(items.filter(i => filters[filter].test(i.length)), i => i.length), [items, filters, filter, seed]);
   const { index, next, prev, restart } = useRound(area, activity, round.length);
   const item = round[index];
   const n = item.length;
@@ -135,7 +141,7 @@ function Clap({ area, activity, profile, config: c }: ActivityProps & { config: 
     timer.current = setTimeout(() => step(0), 300);
   };
 
-  const chips = [...c.filters.map(f => ({ label: f.label, spoken: f.spoken })), { label: 'Shuffle', spoken: 'Shuffle' }];
+  const chips = [...filters.map(f => ({ label: f.label, spoken: f.spoken })), { label: 'Shuffle', spoken: 'Shuffle' }];
 
   return (
     <ActivityFrame
@@ -151,7 +157,7 @@ function Clap({ area, activity, profile, config: c }: ActivityProps & { config: 
           active={filter}
           onPick={i => {
             resetCard();
-            if (i < c.filters.length) setFilter(i);
+            if (i < filters.length) setFilter(i);
             else setSeed(s => s + 1);
             restart();
           }}

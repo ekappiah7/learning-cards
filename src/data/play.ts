@@ -1,4 +1,4 @@
-import type { ModuleColor } from './areas';
+import type { ByLevel, ModuleColor } from './areas';
 import type { PictureName } from '../components/pictures';
 import type { ShapeKind } from './thinking';
 
@@ -6,11 +6,11 @@ import type { ShapeKind } from './thinking';
 
 // Memory match: one board per card, easiest first. "numbers" boards use
 // numerals, "words" boards use a picture with its word.
-export const MEMORY_BOARDS: { pairs: number; kind: 'numbers' | 'words' }[] = [
-  { pairs: 3, kind: 'numbers' },
-  { pairs: 4, kind: 'words' },
-  { pairs: 6, kind: 'words' },
-];
+export const MEMORY_BOARDS: ByLevel<{ pairs: number; kind: 'numbers' | 'words' }[]> = {
+  1: [{ pairs: 2, kind: 'numbers' }, { pairs: 3, kind: 'words' }, { pairs: 4, kind: 'words' }],
+  2: [{ pairs: 3, kind: 'numbers' }, { pairs: 4, kind: 'words' }, { pairs: 6, kind: 'words' }],
+  3: [{ pairs: 4, kind: 'numbers' }, { pairs: 6, kind: 'words' }, { pairs: 6, kind: 'words' }],
+};
 
 export const MEMORY_WORDS: { word: string; picture: PictureName }[] = [
   { word: 'cat', picture: 'cat' }, { word: 'dog', picture: 'dog' }, { word: 'sun', picture: 'sun' },
@@ -20,7 +20,11 @@ export const MEMORY_WORDS: { word: string; picture: PictureName }[] = [
 ];
 
 // Copy the colours: how long each sequence is, one card each.
-export const SIMON_LENGTHS: number[] = [2, 3, 3, 4, 4, 5];
+export const SIMON_LENGTHS: ByLevel<number[]> = {
+  1: [2, 2, 3, 3, 3, 4],
+  2: [2, 3, 3, 4, 4, 5],
+  3: [3, 4, 4, 5, 5, 6],
+};
 
 export const SIMON_PADS: { color: ModuleColor; name: string }[] = [
   { color: 6, name: 'red' },

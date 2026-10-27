@@ -4,6 +4,7 @@ import { moduleVar } from '../data/areas';
 import { DRAW_COLOURS, MEMORY_BOARDS, MEMORY_WORDS, SIMON_LENGTHS, SIMON_PADS, STAMPS } from '../data/play';
 import type { ShapeKind } from '../data/thinking';
 import { praise, speak, stop } from '../speech';
+import { useLevel } from '../store';
 import { ActivityFrame, useRound } from '../components/ActivityFrame';
 import { useLater, useSayOnShow } from '../components/Choices';
 import { Picture } from '../components/pictures';
@@ -17,7 +18,7 @@ const Speaker = () => <Volume2 size={40} strokeWidth={1.5} aria-hidden />;
 
 type Face = { key: string; spoken: string; word?: (typeof MEMORY_WORDS)[number]; number?: number };
 
-function makeBoard(b: (typeof MEMORY_BOARDS)[number]): Face[] {
+function makeBoard(b: (typeof MEMORY_BOARDS)[1][number]): Face[] {
   const faces: Face[] =
     b.kind === 'numbers'
       ? shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]).slice(0, b.pairs).map(n => ({ key: `n${n}`, spoken: String(n), number: n }))
@@ -26,7 +27,8 @@ function makeBoard(b: (typeof MEMORY_BOARDS)[number]): Face[] {
 }
 
 export function MemoryMatch({ area, activity, profile }: ActivityProps) {
-  const round = useMemo(() => MEMORY_BOARDS.map(makeBoard), []);
+  const level = useLevel(area.id);
+  const round = useMemo(() => MEMORY_BOARDS[level].map(makeBoard), [level]);
   const { index, next, prev } = useRound(area, activity, round.length);
   const cards = round[index];
   const [open, setOpen] = useState<number[]>([]);
@@ -139,7 +141,8 @@ function makeSequence(n: number) {
 }
 
 export function Simon({ area, activity, profile }: ActivityProps) {
-  const round = useMemo(() => SIMON_LENGTHS.map(makeSequence), []);
+  const level = useLevel(area.id);
+  const round = useMemo(() => SIMON_LENGTHS[level].map(makeSequence), [level]);
   const { index, next, prev } = useRound(area, activity, round.length);
   const seq = round[index];
   const [lit, setLit] = useState<number | null>(null);

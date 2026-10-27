@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Blend } from 'lucide-react';
 import { moduleVar, type ModuleColor } from '../data/areas';
-import { CVC_WORDS, LETTER_SOUNDS } from '../data/reading';
+import { CVC_WORDS, LETTER_SOUNDS, SOUND_IT_OUT_PICTURED_ONLY } from '../data/reading';
 import { praise, speak, stop } from '../speech';
+import { useLevel } from '../store';
 import { ActivityFrame, useRound } from '../components/ActivityFrame';
 import { Picture } from '../components/pictures';
 import { pickRound } from './util';
@@ -15,7 +16,8 @@ const COLORS: ModuleColor[] = [6, 2, 3];
 const sound = (letter: string) => LETTER_SOUNDS[letter] ?? letter;
 
 export function SoundItOut({ area, activity, profile }: ActivityProps) {
-  const round = useMemo(() => pickRound(CVC_WORDS), []);
+  const level = useLevel(area.id);
+  const round = useMemo(() => pickRound(SOUND_IT_OUT_PICTURED_ONLY[level] ? CVC_WORDS.filter(w => w.picture) : CVC_WORDS), [level]);
   const { index, next, prev } = useRound(area, activity, round.length);
   const item = round[index];
   const letters = item.word.split('');

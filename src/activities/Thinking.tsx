@@ -3,6 +3,7 @@ import { Volume2 } from 'lucide-react';
 import { moduleVar } from '../data/areas';
 import { COLOURS, ODD_ONE_OUT, ODD_ONE_OUT_ITEMS, PATTERNS, SHAPES, SORT_BY, SORT_ITEMS, type ShapeKind } from '../data/thinking';
 import { praise, speak } from '../speech';
+import { useLevel } from '../store';
 import { ActivityFrame, useRound } from '../components/ActivityFrame';
 import { ChoiceTiles, useAnswer, useLater, useSayOnShow } from '../components/Choices';
 import { Shape } from '../components/Shape';
@@ -46,7 +47,8 @@ function makePattern(unit: string) {
 }
 
 export function Patterns({ area, activity, profile }: ActivityProps) {
-  const round = useMemo(() => PATTERNS.map(makePattern), []);
+  const level = useLevel(area.id);
+  const round = useMemo(() => PATTERNS[level].map(makePattern), [level]);
   const { index, next, prev } = useRound(area, activity, round.length);
   const item = round[index];
   const { solved, wrong, check, reset } = useAnswer();
@@ -115,21 +117,22 @@ export function Patterns({ area, activity, profile }: ActivityProps) {
 
 // ---------- Odd one out ----------
 
-function makeOdd(mode: 'colour' | 'shape' | 'size') {
+function makeOdd(mode: 'colour' | 'shape' | 'size', count: number) {
   const [c1, c2] = colourIndexes();
   const [s1, s2] = shapeKinds();
   const oddBig = Math.random() < 0.5;
   const base: Token = mode === 'size' ? { shape: s1, colour: c1, big: !oddBig } : { shape: s1, colour: c1 };
   const odd: Token =
     mode === 'colour' ? { shape: s1, colour: c2 } : mode === 'shape' ? { shape: s2, colour: c1 } : { shape: s1, colour: c1, big: oddBig };
-  const oddAt = Math.floor(Math.random() * ODD_ONE_OUT_ITEMS);
-  const items = Array.from({ length: ODD_ONE_OUT_ITEMS }, (_, i) => (i === oddAt ? odd : base));
+  const oddAt = Math.floor(Math.random() * count);
+  const items = Array.from({ length: count }, (_, i) => (i === oddAt ? odd : base));
   const why = mode === 'size' ? (oddBig ? 'bigger' : 'smaller') : `a different ${mode}`;
   return { items, oddAt, why };
 }
 
 export function OddOneOut({ area, activity, profile }: ActivityProps) {
-  const round = useMemo(() => ODD_ONE_OUT.map(makeOdd), []);
+  const level = useLevel(area.id);
+  const round = useMemo(() => ODD_ONE_OUT[level].map(m => makeOdd(m, ODD_ONE_OUT_ITEMS[level])), [level]);
   const { index, next, prev } = useRound(area, activity, round.length);
   const item = round[index];
   const { solved, wrong, check, reset } = useAnswer();
@@ -186,10 +189,10 @@ export function OddOneOut({ area, activity, profile }: ActivityProps) {
 type SortBy = 'colour' | 'shape' | 'size';
 type Bin = { name: string; label: Token; outline?: boolean };
 
-function makeSort(by: SortBy) {
+function makeSort(by: SortBy, count: number) {
   const cols = colourIndexes();
   const kinds = shapeKinds();
-  const half = Math.ceil(SORT_ITEMS / 2);
+  const half = Math.ceil(count / 2);
   const bins: Bin[] =
     by === 'colour'
       ? [0, 1].map(i => ({ name: colourName(cols[i]), label: { shape: 'circle', colour: cols[i] } }))
@@ -199,7 +202,7 @@ function makeSort(by: SortBy) {
             { name: 'big', label: { shape: 'circle', colour: 0, big: true }, outline: true },
             { name: 'small', label: { shape: 'circle', colour: 0, big: false }, outline: true },
           ];
-  const items = Array.from({ length: SORT_ITEMS }, (_, i) => {
+  const items = Array.from({ length: count }, (_, i) => {
     const bin = i < half ? 0 : 1;
     const t: Token =
       by === 'colour'
@@ -213,7 +216,8 @@ function makeSort(by: SortBy) {
 }
 
 export function Sorting({ area, activity, profile }: ActivityProps) {
-  const round = useMemo(() => SORT_BY.map(makeSort), []);
+  const level = useLevel(area.id);
+  const round = useMemo(() => SORT_BY.map(by => makeSort(by, SORT_ITEMS[level])), [level]);
   const { index, next, prev } = useRound(area, activity, round.length);
   const card = round[index];
   const later = useLater();

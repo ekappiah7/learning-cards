@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 export type Route =
   | { name: 'profiles' }
   | { name: 'home' }
+  | { name: 'parent' }
   | { name: 'area'; areaId: string }
   | { name: 'play'; areaId: string; activityId: string }
   | { name: 'reward'; areaId: string; activityId: string };
@@ -15,6 +16,8 @@ export function parse(hash: string): Route {
   switch (parts[0]) {
     case 'home':
       return { name: 'home' };
+    case 'parent':
+      return { name: 'parent' };
     case 'area':
       if (parts[1]) return { name: 'area', areaId: parts[1] };
       break;
@@ -32,6 +35,8 @@ export function href(route: Route): string {
       return '#/';
     case 'home':
       return '#/home';
+    case 'parent':
+      return '#/parent';
     case 'area':
       return `#/area/${encodeURIComponent(route.areaId)}`;
     case 'play':
