@@ -4,6 +4,7 @@ import type { Profile } from '../store';
 import { ClapSentences, ClapWords } from './Clap';
 import { FirstSound } from './FirstSound';
 import { Adding, CountDots, MoreOrFewer, NumberLine } from './Numbers';
+import { DrawBoard, MemoryMatch, Simon } from './Play';
 import { SoundItOut } from './SoundItOut';
 import { OddOneOut, Patterns, Sorting } from './Thinking';
 
@@ -23,4 +24,7 @@ export const ACTIVITIES: Record<string, ComponentType<ActivityProps>> = {
   'logic/patterns': Patterns,
   'logic/odd-one-out': OddOneOut,
   'logic/sorting': Sorting,
+  'play/memory': MemoryMatch,
+  'play/simon': Simon,
+  'play/draw': DrawBoard,
 };
