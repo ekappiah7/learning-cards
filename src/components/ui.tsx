@@ -5,7 +5,7 @@ import {
   type LucideProps,
 } from 'lucide-react';
 import type { IconName } from '../data/areas';
-import { speak } from '../speech';
+import { speak, type Speech } from '../speech';
 
 const ICONS = {
   AudioLines, BookOpen, Brush, CircleDot, Copy, Ear, Gamepad2, Hand, Hash, Layers,
@@ -28,7 +28,7 @@ export function Backdrop() {
 }
 
 // A round speaker button that reads `text` aloud.
-export function HearIt({ text, label = 'Hear it', small }: { text: string; label?: string; small?: boolean }) {
+export function HearIt({ text, label = 'Hear it', small }: { text: Speech; label?: string; small?: boolean }) {
   return (
     <button type="button" className={`icon-btn plain${small ? ' small' : ''}`} aria-label={label} onClick={() => speak(text)}>
       <Volume2 size={small ? 32 : 40} strokeWidth={1.5} aria-hidden />
@@ -48,7 +48,7 @@ export function BackButton({ onClick, label = 'Back' }: { onClick: () => void; l
 // Back always sits top left so it is in the same place on every screen.
 export function TopBar({
   eyebrow, title, spoken, left, right,
-}: { eyebrow?: string; title: ReactNode; spoken: string; left?: ReactNode; right?: ReactNode }) {
+}: { eyebrow?: string; title: ReactNode; spoken: Speech; left?: ReactNode; right?: ReactNode }) {
   return (
     <header className="topbar">
       <div className="topbar-slot">{left}</div>

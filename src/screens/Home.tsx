@@ -1,6 +1,7 @@
 import { AREAS, moduleVar } from '../data/areas';
 import { navigate } from '../router';
 import { speak } from '../speech';
+import { line } from '../voice/phrases';
 import { totalStars, type Profile } from '../store';
 import { BackButton, Icon, StarShape, TopBar } from '../components/ui';
 
@@ -11,7 +12,7 @@ export function PlayerChip({ profile }: { profile: Profile }) {
       type="button"
       className="chip"
       aria-label={`${profile.name}, ${n} star${n === 1 ? '' : 's'}`}
-      onClick={() => speak(`${profile.name} has ${n} star${n === 1 ? '' : 's'}`)}
+      onClick={() => speak([{ name: profile.name, id: profile.id }, line.hasStars(n)])}
     >
       <span className="dot" style={{ background: moduleVar(profile.color) }}>
         <StarShape size={28} color="var(--plum-950)" filled={false} />
@@ -27,7 +28,7 @@ export function Home({ profile }: { profile: Profile }) {
       <TopBar
         eyebrow={`Hello, ${profile.name}`}
         title={<>What shall we <em>play?</em></>}
-        spoken={`Hello ${profile.name}. What shall we play?`}
+        spoken={['Hello,', { name: profile.name, id: profile.id }, 'What shall we play?']}
         left={<BackButton label="Change player" onClick={() => navigate({ name: 'profiles' })} />}
         right={<PlayerChip profile={profile} />}
       />

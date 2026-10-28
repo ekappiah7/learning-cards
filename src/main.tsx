@@ -9,6 +9,9 @@ import '@fontsource/playfair-display/700-italic.css';
 import './styles/app.css';
 import { App } from './App';
 import { StoreProvider } from './store';
+import { loadRecordings } from './voice/recordings';
+
+loadRecordings();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

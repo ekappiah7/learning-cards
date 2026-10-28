@@ -28,7 +28,7 @@ export function AreaPage({ area, profile }: { area: Area; profile: Profile }) {
               aria-label={ready ? act.title : `${act.title}, coming soon`}
               onClick={() => {
                 if (!ready) {
-                  speak(`${act.spoken}. Coming soon!`);
+                  speak([act.spoken, 'Coming soon!']);
                   return;
                 }
                 speak(act.spoken);

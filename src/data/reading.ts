@@ -27,6 +27,13 @@ export const LETTER_SOUNDS: Record<string, string> = {
   s: 'sss', t: 'tuh', u: 'uh', v: 'vvv', w: 'wuh', x: 'ks', y: 'yuh', z: 'zzz',
 };
 
+// A word for each letter, shown when a parent records the letter sounds.
+export const LETTER_EXAMPLES: Record<string, string> = {
+  a: 'apple', b: 'bus', c: 'cat', d: 'dog', e: 'egg', f: 'fish', g: 'gift', h: 'hat', i: 'insect',
+  j: 'jam', k: 'kite', l: 'lamp', m: 'moon', n: 'nut', o: 'octopus', p: 'pen', q: 'queen', r: 'rabbit',
+  s: 'sun', t: 'tent', u: 'umbrella', v: 'van', w: 'worm', x: 'box', y: 'yo-yo', z: 'zip',
+};
+
 // Sound it out: three-letter words, one sound per letter. A picture is
 // shown after blending when one exists.
 export const CVC_WORDS: { word: string; picture?: PictureName }[] = [

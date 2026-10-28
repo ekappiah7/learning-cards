@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Volume2 } from 'lucide-react';
 import { moduleVar } from '../data/areas';
-import { FIRST_SOUND_CHOICES, FIRST_SOUND_LETTERS, FIRST_SOUND_WORDS, LETTER_SOUNDS } from '../data/reading';
+import { FIRST_SOUND_CHOICES, FIRST_SOUND_LETTERS, FIRST_SOUND_WORDS } from '../data/reading';
 import { praise, speak } from '../speech';
 import { useLevel } from '../store';
 import { ActivityFrame, useRound } from '../components/ActivityFrame';
@@ -38,7 +38,7 @@ export function FirstSound({ area, activity, profile }: ActivityProps) {
 
   const choose = (letter: string) =>
     check(letter, answer, () => {
-      speak(`${LETTER_SOUNDS[letter] ?? letter}. ${item.word}.`, { rate: 0.75 });
+      speak([{ letter }, item.word], { rate: 0.75 });
       later(() => praise(), 1600);
     });
 

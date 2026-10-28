@@ -4,6 +4,7 @@ import { moduleVar, type ModuleColor } from '../data/areas';
 import { ADD, COMPARE, COUNT, NUMBER_CHOICES, NUMBER_LINE } from '../data/numbers';
 import { praise, speak, stop } from '../speech';
 import { useLevel } from '../store';
+import { line } from '../voice/phrases';
 import { ActivityFrame, ROUND_SIZE, useRound } from '../components/ActivityFrame';
 import { ChoiceTiles, useAnswer, useLater, useSayOnShow } from '../components/Choices';
 import { shuffle } from './util';
@@ -170,7 +171,7 @@ export function MoreOrFewer({ area, activity, profile }: ActivityProps) {
   const item = round[index];
   const { solved, wrong, check, reset } = useAnswer();
   const later = useLater();
-  const question = `Which has ${item.ask}?`;
+  const question = line.whichHas(item.ask);
   const answer: Side = (item.ask === 'more') === item.a > item.b ? 'left' : 'right';
   const groups: { side: Side; n: number; color: ModuleColor }[] = [
     { side: 'left', n: item.a, color: 8 },
@@ -183,7 +184,7 @@ export function MoreOrFewer({ area, activity, profile }: ActivityProps) {
     check(side, answer, () => {
       const big = Math.max(item.a, item.b);
       const small = Math.min(item.a, item.b);
-      speak(item.ask === 'more' ? `Yes! ${big} is more than ${small}.` : `Yes! ${small} is fewer than ${big}.`);
+      speak(item.ask === 'more' ? line.moreThan(big, small) : line.fewerThan(small, big));
       later(() => praise(), 2400);
     });
 
@@ -259,7 +260,7 @@ export function NumberLine({ area, activity, profile }: ActivityProps) {
   const color = moduleVar(area.color);
   const { solved, wrong, check, reset } = useAnswer();
   const later = useLater();
-  const question = `What comes ${item.ask} ${item.given}?`;
+  const question = line.whatComes(item.ask, item.given);
 
   useSayOnShow(question, index);
 
@@ -317,7 +318,7 @@ export function NumberLine({ area, activity, profile }: ActivityProps) {
         label={v => `Number ${v}`}
         onChoose={v =>
           check(v, String(item.answer), () => {
-            speak(`${item.answer}! ${item.answer} comes ${item.ask} ${item.given}.`);
+            speak([`${item.answer}!`, line.comes(item.answer, item.ask, item.given)]);
             later(() => praise(), 2400);
           })
         }
@@ -345,7 +346,7 @@ export function Adding({ area, activity, profile }: ActivityProps) {
   const later = useLater();
   const [counted, setCounted] = useState(0);
   const along = useCountAlong(setCounted, n => speak(`${n}!`));
-  const question = `${item.a} and ${item.b} make?`;
+  const question = line.addQuestion(item.a, item.b);
 
   useSayOnShow(question, index);
 
@@ -365,7 +366,7 @@ export function Adding({ area, activity, profile }: ActivityProps) {
       profile={profile}
       eyebrow="Adding to ten"
       title={<>Put them <em>together</em></>}
-      spoken={`Put them together. ${question}`}
+      spoken={['Put them together.', question]}
       index={index}
       total={round.length}
       message={solved ? `${item.a} and ${item.b} make ${item.sum}!` : `${item.a} and ${item.b} make…`}
@@ -405,7 +406,7 @@ export function Adding({ area, activity, profile }: ActivityProps) {
           check(v, String(item.sum), () => {
             along.cancel();
             setCounted(item.sum);
-            speak(`${item.a} and ${item.b} make ${item.sum}!`);
+            speak(line.addAnswer(item.a, item.b, item.sum));
             later(() => praise(), 2200);
           })
         }

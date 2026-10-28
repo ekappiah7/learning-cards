@@ -820,6 +820,44 @@ button { cursor: pointer; touch-action: manipulation; }
 .level-block { display: flex; flex-direction: column; gap: var(--space-1); padding-bottom: var(--space-3); border-bottom: 1px solid var(--line-subtle); }
 .level-block:last-child { border-bottom: none; }
 
+/* ---------- Recording ---------- */
+
+.row-actions { display: inline-flex; flex-wrap: wrap; gap: var(--space-2); }
+.letter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(64px, 1fr)); gap: var(--space-2); }
+.letter-key {
+  min-height: 64px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--line-strong);
+  background: var(--surface-base);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--text-heading);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+}
+.letter-key.done { border: 3px solid var(--module-4); }
+.letter-key.done svg { color: var(--module-4); }
+.recorder .parent-note { font-size: var(--text-lg); }
+.recorder-main { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); padding: var(--space-4) 0; }
+.mic-btn {
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  border: none;
+  background: var(--action-bg);
+  color: var(--action-fg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-md);
+}
+.mic-btn.on { background: var(--module-6); color: var(--plum-950); animation: pulse 1.2s var(--ease-standard) infinite; }
+@keyframes pulse { 50% { transform: scale(1.06); } }
+.recorder-error { margin: 0; padding: var(--space-3) var(--space-4); border-radius: var(--radius-sm); border: 1.5px solid var(--module-6); font-size: var(--text-base); }
+.recorder .actions { justify-content: center; }
+
 /* ---------- Motion ---------- */
 
 @keyframes pop {

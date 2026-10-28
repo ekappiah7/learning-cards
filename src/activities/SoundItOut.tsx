@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Blend } from 'lucide-react';
 import { moduleVar, type ModuleColor } from '../data/areas';
-import { CVC_WORDS, LETTER_SOUNDS, SOUND_IT_OUT_PICTURED_ONLY } from '../data/reading';
+import { CVC_WORDS, SOUND_IT_OUT_PICTURED_ONLY } from '../data/reading';
 import { praise, speak, stop } from '../speech';
 import { useLevel } from '../store';
 import { ActivityFrame, useRound } from '../components/ActivityFrame';
@@ -13,7 +13,6 @@ import type { ActivityProps } from './index';
 // together into the word. The picture appears once the word is blended.
 
 const COLORS: ModuleColor[] = [6, 2, 3];
-const sound = (letter: string) => LETTER_SOUNDS[letter] ?? letter;
 
 export function SoundItOut({ area, activity, profile }: ActivityProps) {
   const level = useLevel(area.id);
@@ -46,7 +45,7 @@ export function SoundItOut({ area, activity, profile }: ActivityProps) {
       n[k] = true;
       return n;
     });
-    speak(sound(letters[k]), { rate: 0.7 });
+    speak([{ letter: letters[k] }], { rate: 0.7 });
   };
 
   // Say each sound with its letter lit, then the whole word.
@@ -65,7 +64,7 @@ export function SoundItOut({ area, activity, profile }: ActivityProps) {
         return;
       }
       setActive(k);
-      speak(sound(letters[k]), { rate: 0.7 });
+      speak([{ letter: letters[k] }], { rate: 0.7 });
       timer.current = setTimeout(() => step(k + 1), 750);
     };
     step(0);

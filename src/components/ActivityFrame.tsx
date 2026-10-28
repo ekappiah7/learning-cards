@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { ArrowLeft, ArrowRight, RotateCcw, Star } from 'lucide-react';
 import { moduleVar, type Activity, type Area } from '../data/areas';
 import { navigate } from '../router';
-import { speak, stop } from '../speech';
+import { speak, stop, type Speech } from '../speech';
 import { useStore, type Profile } from '../store';
 import { BackButton, TopBar } from './ui';
 import { PlayerChip } from '../screens/Home';
@@ -42,7 +42,7 @@ type Props = {
   profile: Profile;
   eyebrow: string;
   title: ReactNode;
-  spoken: string;
+  spoken: Speech;
   toolbar?: ReactNode;          // optional chips above the card
   index: number;
   total: number;

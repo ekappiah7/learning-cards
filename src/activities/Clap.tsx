@@ -4,6 +4,7 @@ import { moduleVar, type ModuleColor } from '../data/areas';
 import { CLAP_MAX_SYLLABLES, CLAP_MAX_WORDS, CLAP_SENTENCES, CLAP_WORDS } from '../data/reading';
 import { speak, stop } from '../speech';
 import { useLevel } from '../store';
+import { line } from '../voice/phrases';
 import { ActivityFrame, Chips, useRound } from '../components/ActivityFrame';
 import { pickRound } from './util';
 import type { ActivityProps } from './index';
@@ -32,7 +33,6 @@ type ClapConfig = {
 };
 
 const NUM = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight'];
-const plural = (n: number, w: string) => `${n} ${w}${n === 1 ? '' : 's'}`;
 
 const WORDS: ClapConfig = {
   kind: 'syllables',
@@ -44,7 +44,7 @@ const WORDS: ClapConfig = {
   spoken: 'How many claps?',
   filters: [
     { label: 'All', spoken: 'All words', test: () => true },
-    ...[1, 2, 3, 4].map(n => ({ label: plural(n, 'clap'), spoken: plural(n, 'clap'), test: (k: number) => k === n })),
+    ...[1, 2, 3, 4].map(n => ({ label: line.claps(n), spoken: line.claps(n), test: (k: number) => k === n })),
   ],
   idle: 'Say it and clap',
   done: n => `${NUM[n]} clap${n > 1 ? 's' : ''}!`,
@@ -64,7 +64,7 @@ const SENTENCES: ClapConfig = {
   spoken: 'How many words?',
   filters: [
     { label: 'All', spoken: 'All sentences', test: () => true },
-    ...[3, 4, 5].map(n => ({ label: plural(n, 'word'), spoken: plural(n, 'word'), test: (k: number) => k === n })),
+    ...[3, 4, 5].map(n => ({ label: line.words(n), spoken: line.words(n), test: (k: number) => k === n })),
     { label: '6+ words', spoken: 'Six or more words', test: (k: number) => k >= 6 },
   ],
   idle: 'Read it and clap each word',

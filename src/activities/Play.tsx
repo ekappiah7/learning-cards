@@ -5,6 +5,7 @@ import { DRAW_COLOURS, MEMORY_BOARDS, MEMORY_WORDS, SIMON_LENGTHS, SIMON_PADS, S
 import type { ShapeKind } from '../data/thinking';
 import { praise, speak, stop } from '../speech';
 import { useLevel } from '../store';
+import { line } from '../voice/phrases';
 import { ActivityFrame, useRound } from '../components/ActivityFrame';
 import { useLater, useSayOnShow } from '../components/Choices';
 import { Picture } from '../components/pictures';
@@ -419,7 +420,7 @@ export function DrawBoard({ area, activity, profile }: ActivityProps) {
                 aria-pressed={tool === s}
                 onClick={() => {
                   setTool(s);
-                  speak(`${s} stamp`);
+                  speak(line.stamp(s));
                 }}
               >
                 <Shape kind={s} color={color} size={40} />

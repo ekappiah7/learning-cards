@@ -12,7 +12,7 @@ export function Profiles() {
 
   const pick = (id: string, name: string) => {
     selectProfile(id);
-    speak(`Hello, ${name}!`);
+    speak(['Hello,', { name, id }]);
     navigate({ name: 'home' });
   };
 

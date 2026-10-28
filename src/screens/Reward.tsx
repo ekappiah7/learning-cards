@@ -14,9 +14,9 @@ export function Reward({ area, activity, profile }: { area: Area; activity: Acti
   const shown = Math.min(total, 40);
 
   useEffect(() => {
-    const t = setTimeout(() => speak(`Well done, ${profile.name}! You got a star.`), 400);
+    const t = setTimeout(() => speak(['Well done,', { name: profile.name, id: profile.id }, 'You got a star.']), 400);
     return () => clearTimeout(t);
-  }, [profile.name]);
+  }, [profile.name, profile.id]);
 
   return (
     <div className="page fade-in">

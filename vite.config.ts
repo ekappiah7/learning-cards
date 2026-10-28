@@ -32,7 +32,8 @@ export default defineConfig({
       },
       workbox: {
         // woff files are skipped: every browser that can install the app uses woff2.
-        globPatterns: ['**/*.{js,css,html,woff2,png,svg}'],
+        // mp3 covers the recorded voice, so speech works offline too.
+        globPatterns: ['**/*.{js,css,html,woff2,png,svg,mp3}'],
         navigateFallback: 'index.html',
         // The design system's typography file also asks Google Fonts for its
         // fonts; keep a copy so that request works offline too.

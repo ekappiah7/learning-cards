@@ -4,6 +4,7 @@ import { moduleVar } from '../data/areas';
 import { COLOURS, ODD_ONE_OUT, ODD_ONE_OUT_ITEMS, PATTERNS, SHAPES, SORT_BY, SORT_ITEMS, type ShapeKind } from '../data/thinking';
 import { praise, speak } from '../speech';
 import { useLevel } from '../store';
+import { line } from '../voice/phrases';
 import { ActivityFrame, useRound } from '../components/ActivityFrame';
 import { ChoiceTiles, useAnswer, useLater, useSayOnShow } from '../components/Choices';
 import { Shape } from '../components/Shape';
@@ -79,7 +80,7 @@ export function Patterns({ area, activity, profile }: ActivityProps) {
         label: 'Hear it',
         icon: <Speaker />,
         ariaLabel: 'Hear the pattern',
-        onPress: () => speak(`${item.seq.map(tokenName).join(', ')}. What comes next?`),
+        onPress: () => speak([...item.seq.map(tokenName), 'What comes next?']),
       }}
       onPrev={() => move(prev)}
       onNext={() => move(next)}
@@ -106,7 +107,7 @@ export function Patterns({ area, activity, profile }: ActivityProps) {
         className="letter-tile shape-tile"
         onChoose={id =>
           check(id, tokenId(item.answer), () => {
-            speak(`Yes! ${tokenName(item.answer)}.`);
+            speak(['Yes!', tokenName(item.answer)]);
             later(() => praise(), 1500);
           })
         }
@@ -175,7 +176,7 @@ export function OddOneOut({ area, activity, profile }: ActivityProps) {
         className="letter-tile shape-tile odd-tile"
         onChoose={i =>
           check(i, String(item.oddAt), () => {
-            speak(`Yes! That one is ${item.why}.`);
+            speak(line.oddWhy(item.why));
             later(() => praise(), 1800);
           })
         }
@@ -226,7 +227,7 @@ export function Sorting({ area, activity, profile }: ActivityProps) {
   const [wrong, setWrong] = useState<{ id: number; n: number } | null>(null);
   const [drag, setDrag] = useState<{ id: number; x: number; y: number } | null>(null);
   const start = useRef<{ id: number; x: number; y: number; moved: boolean } | null>(null);
-  const question = `Sort them by ${card.by}`;
+  const question = line.sortBy(card.by);
   const done = card.items.every(it => placed[it.id] !== undefined);
 
   useSayOnShow(question, index);
@@ -305,7 +306,7 @@ export function Sorting({ area, activity, profile }: ActivityProps) {
       total={round.length}
       message={done ? 'All sorted!' : 'Drag each one into a box'}
       feedback={done ? 'right' : null}
-      main={{ label: 'Hear it', icon: <Speaker />, onPress: () => speak(`${question}. ${card.bins[0].name} or ${card.bins[1].name}?`), ariaLabel: 'Hear the question' }}
+      main={{ label: 'Hear it', icon: <Speaker />, onPress: () => speak([question, line.binChoice(card.bins[0].name, card.bins[1].name)]), ariaLabel: 'Hear the question' }}
       onReset={resetCard}
       onPrev={() => {
         resetCard();

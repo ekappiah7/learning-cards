@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { speak } from '../speech';
+import { speak, type Speech } from '../speech';
 
 // Shared pick-the-answer logic: a wrong choice wobbles and says "Try
 // again", a right one stays lit. There is no failure state.
@@ -42,12 +42,13 @@ export function useLater() {
 
 // Says `text` shortly after each new card appears. Pass the card index as
 // `card` so the same question is said again on the next card.
-export function useSayOnShow(text: string, card?: number) {
+export function useSayOnShow(text: Speech, card?: number) {
   const t = useRef<ReturnType<typeof setTimeout>>(undefined);
   useEffect(() => {
     t.current = setTimeout(() => speak(text), 350);
     return () => clearTimeout(t.current);
-  }, [text, card]);
+    // A new array each render must not re-trigger, so compare by content.
+  }, [JSON.stringify(text), card]);
 }
 
 // `render` draws a tile's content (a shape, say); by default the value is
