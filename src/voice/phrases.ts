@@ -36,7 +36,7 @@ export const PRAISE = ['Well done!', 'Brilliant!', 'Great job!', 'You did it!', 
 
 // Fixed lines used around the app.
 const FIXED = [
-  'Again', 'Back', 'Next', 'Home', 'Play again', 'Try again', 'Ask a grown-up', 'Add a player', 'Who is playing?',
+  'Yes!', 'Again', 'Back', 'Next', 'Home', 'Play again', 'Try again', 'Ask a grown-up', 'Add a player', 'Who is playing?',
   'Parent corner', 'Hello,', 'What shall we play?', 'Well done,', 'You got a star.', 'Coming soon!', 'Shuffle',
   'How many claps?', 'How many words?', 'All words', 'All sentences', 'Six or more words',
   'Sound it out. Tap each letter, then blend.', 'What sound does it start with?',
