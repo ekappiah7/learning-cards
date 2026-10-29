@@ -49,11 +49,15 @@ button { cursor: pointer; touch-action: manipulation; }
 
 .page {
   width: 100%;
-  max-width: 1080px;
+  max-width: 1600px;
   min-height: 100vh;
   min-height: 100dvh;
   margin: 0 auto;
-  padding: var(--space-6) var(--space-5) var(--space-12);
+  padding:
+    max(var(--space-6), env(safe-area-inset-top))
+    max(var(--space-5), env(safe-area-inset-right))
+    max(var(--space-12), env(safe-area-inset-bottom))
+    max(var(--space-5), env(safe-area-inset-left));
   display: flex;
   flex-direction: column;
   gap: var(--space-8);
@@ -143,6 +147,10 @@ button { cursor: pointer; touch-action: manipulation; }
   gap: var(--space-6);
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
 }
+/* Tile screens fill the rest of the screen: rows share the height. */
+.grid.fill { flex: 1; grid-auto-rows: minmax(min-content, 1fr); }
+.grid.fill.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid.fill > * { min-height: 0; height: 100%; }
 
 .area-tile {
   min-height: 260px;
@@ -352,6 +360,8 @@ button { cursor: pointer; touch-action: manipulation; }
 .chip-btn[aria-pressed='true'] { background: var(--action-bg); color: var(--action-fg); border-color: var(--action-bg); }
 
 .activity-card {
+  flex: 1;
+  justify-content: space-evenly;
   background: var(--surface-raised);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
@@ -750,7 +760,8 @@ button { cursor: pointer; touch-action: manipulation; }
 .tool-btn[aria-pressed='true'] { border: 3px solid var(--plum-700); box-shadow: var(--shadow-md); }
 .draw-canvas {
   width: 100%;
-  height: clamp(260px, calc(100dvh - 660px), 620px);
+  flex: 1 1 0;
+  min-height: 160px;
   border-radius: var(--radius-md);
   border: 1.5px solid var(--line);
   background: var(--surface-overlay);
@@ -880,6 +891,35 @@ button { cursor: pointer; touch-action: manipulation; }
 }
 
 @media (max-width: 600px) {
+  .grid.fill { gap: var(--space-4); grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .avatar { width: 88px; height: 88px; font-size: var(--text-3xl); }
+  .title { font-size: var(--text-2xl); }
+  .topbar { gap: var(--space-2); min-height: 64px; }
+  .eyebrow { font-size: var(--text-base); }
+  .activity-page { gap: var(--space-3); padding-top: max(var(--space-3), env(safe-area-inset-top)); }
+  .activity-page .eyebrow { display: none; }
+  .chips { flex-wrap: nowrap; overflow-x: auto; padding-bottom: var(--space-1); scrollbar-width: none; }
+  .chip-btn { min-height: 56px; font-size: var(--text-lg); padding: var(--space-2) var(--space-4); }
+  .activity-card { padding: var(--space-10) var(--space-3) var(--space-4); gap: var(--space-3); }
+  .activity-page .pips { position: absolute; top: var(--space-4); left: var(--space-4); }
+  .activity-page .pips span { width: 14px; height: 14px; }
+  .card-corner { top: var(--space-3); right: var(--space-3); }
+  .message { font-size: var(--text-xl); min-height: 32px; }
+  .pill.big { min-height: 72px; font-size: var(--text-2xl); padding: var(--space-3) var(--space-8); }
+  .main-actions .pill.secondary { min-height: 64px; font-size: var(--text-lg); padding: var(--space-3) var(--space-5); }
+  .clap-item.syllables { font-size: clamp(var(--text-4xl), 15vw, var(--text-6xl)); }
+  .clap-item.words { font-size: clamp(var(--text-2xl), 9vw, var(--text-4xl)); }
+  .shape-tile { width: 92px; height: 92px; }
+  .odd-tile { width: 96px; height: 96px; }
+  .simon-pad { width: 112px; height: 112px; }
+  .memory-card { width: 76px; height: 76px; }
+  .memory-card svg { width: 36px; height: 36px; }
+  .memory-number { font-size: var(--text-3xl); }
+  .memory-word { font-size: var(--text-base); }
+
+  .area-tile { min-height: 160px; padding: var(--space-4); font-size: var(--text-2xl); gap: var(--space-3); }
+  .area-tile svg { width: 64px; height: 64px; }
+  .card-tile { min-height: 160px; padding: var(--space-4); font-size: var(--text-xl); }
   .page { padding: var(--space-4) var(--space-4) var(--space-10); gap: var(--space-6); }
   .icon-btn { width: 64px; height: 64px; }
   .topbar-slot { min-width: 64px; }
@@ -941,5 +981,55 @@ button { cursor: pointer; touch-action: manipulation; }
   .memory-number { font-size: var(--text-4xl); }
   .memory-word { font-size: var(--text-lg); }
   .simon-pad { width: 104px; height: 104px; }
-  .draw-canvas { height: clamp(220px, calc(100dvh - 470px), 620px); }
+}
+
+/* Phones (last, so these win over the short-screen rules above). Keeps each
+   activity on one screen with 64px tap targets. */
+@media (max-width: 600px) {
+  .activity-page .title, .title { font-size: var(--text-2xl); }
+  .activity-page .topbar .icon-btn:not(.small) { width: 56px; height: 56px; }
+  .topbar-slot { min-width: 56px; }
+  .chip { min-height: 56px; padding: var(--space-1) var(--space-3) var(--space-1) var(--space-1); font-size: var(--text-lg); }
+  .chip .dot { width: 40px; height: 40px; }
+  .activity-card { padding-top: var(--space-10); }
+  .card-corner { top: var(--space-3); bottom: auto; right: var(--space-3); width: 56px; height: 56px; }
+  .activity-nav .pill { min-height: 64px; padding: var(--space-2) var(--space-5); font-size: var(--text-xl); }
+  .letter-row { gap: var(--space-3); }
+  .letter-tile { width: 84px; height: 96px; font-size: var(--text-4xl); }
+  .shape-tile { width: 84px; height: 84px; }
+  .odd-tile { width: 76px; height: 76px; }
+  .odd-tile .shape { width: 60px; height: 60px; }
+  .picture-slot { width: 104px; height: 104px; }
+  .picture-slot svg { width: 64px; height: 64px; }
+  .clap-dots span, .clap-dots.words span { width: 44px; height: 44px; }
+  .clap-dots { min-height: 44px; gap: var(--space-2); }
+  .dots { gap: var(--space-2); }
+  .dots span { width: 40px; height: 40px; font-size: var(--text-base); }
+  .dots.size-m span { width: 30px; height: 30px; font-size: var(--text-xs); }
+  .dots.size-s span { width: 22px; height: 22px; }
+  .group-panel { min-height: 112px; padding: var(--space-3); }
+  .num-node { width: 60px; height: 60px; font-size: var(--text-2xl); }
+  .numline { gap: var(--space-2); }
+  .numline::before { bottom: 30px; }
+  .hopper { height: 40px; }
+  .sum-row { gap: var(--space-2); }
+  .sum-part { min-width: 0; }
+  .sum-sign { font-size: var(--text-3xl); }
+  .pattern-slot { width: 40px; height: 40px; }
+  .pattern-slot .shape { width: 36px; height: 36px; }
+  .pattern-row { gap: var(--space-1); }
+  .sort-item { width: 64px; height: 64px; }
+  .sort-item .shape { max-width: 56px; max-height: 56px; }
+  .bin { min-height: 104px; padding: var(--space-2); }
+  .bin-label { font-size: var(--text-lg); }
+  .simon { gap: var(--space-3); }
+  .simon-pad { width: 104px; height: 104px; }
+  .memory-grid { gap: var(--space-2); }
+  .memory-card { width: 72px; height: 72px; }
+  .draw-tools { flex-wrap: nowrap; overflow-x: auto; gap: var(--space-2); scrollbar-width: none; }
+  .draw-tools .swatches { flex-wrap: nowrap; gap: var(--space-2); }
+  .draw-tools .swatch, .tool-btn { width: 56px; height: 56px; flex-shrink: 0; }
+  .activity-page { padding-bottom: max(var(--space-10), env(safe-area-inset-bottom)); }
+  .card-tile { min-height: 128px; gap: var(--space-2); }
+  .avatar { width: 72px; height: 72px; font-size: var(--text-2xl); }
 }

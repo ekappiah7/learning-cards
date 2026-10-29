@@ -17,7 +17,7 @@ export function AreaPage({ area, profile }: { area: Area; profile: Profile }) {
         left={<BackButton label="Home" onClick={() => navigate({ name: 'home' })} />}
         right={<PlayerChip profile={profile} />}
       />
-      <div className="grid">
+      <div className={`grid fill${area.activities.length === 4 ? ' cols-2' : ''}`}>
         {area.activities.map(act => {
           const ready = starKey(area.id, act.id) in ACTIVITIES;
           return (

@@ -32,7 +32,7 @@ export function Home({ profile }: { profile: Profile }) {
         left={<BackButton label="Change player" onClick={() => navigate({ name: 'profiles' })} />}
         right={<PlayerChip profile={profile} />}
       />
-      <div className="grid">
+      <div className="grid fill cols-2">
         {AREAS.map(a => (
           <button
             key={a.id}

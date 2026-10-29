@@ -25,7 +25,7 @@ export function Profiles() {
         right={<HoldToOpen label="Parent corner" onOpen={() => navigate({ name: 'parent' })} />}
       />
 
-      <div className="grid">
+      <div className="grid fill">
         {profiles.map(p => (
           <button key={p.id} type="button" className="card-tile" onClick={() => pick(p.id, p.name)}>
             <span className="avatar" style={{ background: moduleVar(p.color) }}>{p.name.charAt(0).toUpperCase()}</span>
