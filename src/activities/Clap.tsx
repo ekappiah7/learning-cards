@@ -8,6 +8,7 @@ import { line } from '../voice/phrases';
 import { ActivityFrame, Chips, useRound } from '../components/ActivityFrame';
 import { pickRound } from './util';
 import type { ActivityProps } from './index';
+import { sfx } from '../sound';
 
 // Port of the Clap Words and Clap Sentences prototypes (reference/*.dc.html).
 // Tap Clap once per syllable (or word): the next part lights up and a circle
@@ -122,6 +123,7 @@ function Clap({ area, activity, profile, config: c }: ActivityProps & { config: 
     const k = claps + 1;
     setClaps(k);
     setPopKey(x => x + 1);
+    sfx('clap');
     if (k === n) timer.current = setTimeout(() => say(whole()), c.doneDelay);
     else if (c.sayEachClap) say(clean(item[k - 1]));
   };
@@ -135,6 +137,7 @@ function Clap({ area, activity, profile, config: c }: ActivityProps & { config: 
       }
       setClaps(k + 1);
       setPopKey(x => x + 1);
+      sfx('clap');
       say(clean(item[k]), c.demoRate);
       timer.current = setTimeout(() => step(k + 1), c.demoStep);
     };

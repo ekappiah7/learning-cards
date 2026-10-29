@@ -5,6 +5,7 @@ import { starKey, type Profile } from '../store';
 import { BackButton, Icon, Stars, TopBar } from '../components/ui';
 import { PlayerChip } from './Home';
 import { ACTIVITIES } from '../activities';
+import { AREA_HOST } from '../data/characters';
 
 export function AreaPage({ area, profile }: { area: Area; profile: Profile }) {
   const color = moduleVar(area.color);
@@ -14,6 +15,7 @@ export function AreaPage({ area, profile }: { area: Area; profile: Profile }) {
         eyebrow={profile.name}
         title={area.title}
         spoken={area.spoken}
+        host={AREA_HOST[area.id]}
         left={<BackButton label="Home" onClick={() => navigate({ name: 'home' })} />}
         right={<PlayerChip profile={profile} />}
       />

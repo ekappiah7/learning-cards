@@ -12,6 +12,7 @@ import { Picture } from '../components/pictures';
 import { Shape, SHAPE_PATHS } from '../components/Shape';
 import { shuffle } from './util';
 import type { ActivityProps } from './index';
+import { sfx } from '../sound';
 
 const Speaker = () => <Volume2 size={40} strokeWidth={1.5} aria-hidden />;
 
@@ -47,6 +48,7 @@ export function MemoryMatch({ area, activity, profile }: ActivityProps) {
 
   const flip = (i: number) => {
     if (open.length === 2 || open.includes(i) || matched.has(cards[i].key)) return;
+    sfx('flip');
     speak(cards[i].spoken);
     if (open.length === 0) {
       setOpen([i]);
@@ -60,9 +62,13 @@ export function MemoryMatch({ area, activity, profile }: ActivityProps) {
         setMatched(m);
         setOpen([]);
         if (m.size * 2 === cards.length) {
+          sfx('right');
           speak('You found all the pairs!');
           later(() => praise(), 1800);
-        } else speak('A pair!');
+        } else {
+          sfx('pop');
+          speak('A pair!');
+        }
       }, 700);
     } else {
       // Not a pair: both turn back over after a moment. No penalty.
@@ -172,6 +178,7 @@ export function Simon({ area, activity, profile }: ActivityProps) {
         return;
       }
       setLit(seq[k]);
+      sfx(`pad${seq[k] as 0 | 1 | 2 | 3}`);
       speak(SIMON_PADS[seq[k]].name);
       timer.current = setTimeout(() => {
         setLit(null);
@@ -191,6 +198,7 @@ export function Simon({ area, activity, profile }: ActivityProps) {
     if (playing || done) return;
     clear();
     setLit(pad);
+    sfx(`pad${pad as 0 | 1 | 2 | 3}`);
     timer.current = setTimeout(() => setLit(null), 300);
     speak(SIMON_PADS[pad].name);
     if (pad === seq[pos]) {
@@ -344,6 +352,7 @@ export function DrawBoard({ area, activity, profile }: ActivityProps) {
       drawing.current = { type: 'pen', color, points: [[x, y]] };
       redraw();
     } else {
+      sfx('pop');
       setMarks(m => [...m, { type: 'stamp', color, shape: tool, x, y }]);
     }
   };

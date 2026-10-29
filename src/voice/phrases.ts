@@ -6,10 +6,15 @@ import { AREAS } from '../data/areas.ts';
 import { CLAP_SENTENCES, CLAP_WORDS, CVC_WORDS, FIRST_SOUND_WORDS, LETTER_SOUNDS } from '../data/reading.ts';
 import { COLOURS, SHAPES } from '../data/thinking.ts';
 import { MEMORY_WORDS, SIMON_PADS, STAMPS } from '../data/play.ts';
+import { LESSONS } from '../data/lessons.ts';
 
 // A spoken line: plain text, or parts played one after another. A name or
 // letter part uses the parent's own recording when there is one.
-export type Part = string | { name: string; id: string } | { letter: string };
+export type Part =
+  | string
+  | { name: string; id: string }
+  | { letter: string }
+  | { by: 'jabari' | 'jamila'; say: string | Part[] }; // said by a particular character
 export type Speech = string | Part[];
 
 const plural = (n: number, w: string) => `${n} ${w}${n === 1 ? '' : 's'}`;
@@ -130,6 +135,13 @@ export function allPhrases(): { normal: string[]; slow: string[] } {
   MEMORY_WORDS.forEach(w => add(w.word));
   SIMON_PADS.forEach(p => add(p.name));
   STAMPS.forEach(s => add(line.stamp(s)));
+
+  // Watch-first lessons (letter parts are already covered above).
+  for (const beats of Object.values(LESSONS))
+    for (const b of beats) {
+      if (typeof b.say === 'string') add(b.say);
+      else b.say.forEach(p => typeof p === 'string' && add(p));
+    }
 
   for (const s of slow) normal.delete(s);
   return { normal: [...normal], slow: [...slow] };

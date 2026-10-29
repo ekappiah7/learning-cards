@@ -5,6 +5,8 @@ import {
   type LucideProps,
 } from 'lucide-react';
 import type { IconName } from '../data/areas';
+import type { CharacterId } from '../data/characters';
+import { Buddy } from './Buddy';
 import { speak, type Speech } from '../speech';
 
 const ICONS = {
@@ -44,11 +46,21 @@ export function BackButton({ onClick, label = 'Back' }: { onClick: () => void; l
   );
 }
 
-// Screen header: back slot, eyebrow + title with a hear-it button, right slot.
-// Back always sits top left so it is in the same place on every screen.
+// Screen header: back slot, eyebrow + title, right slot. Beside the title
+// sit the hosting character(s); tapping one reads the title aloud. Without a
+// host there is a plain speaker button. Back always sits top left so it is
+// in the same place on every screen.
 export function TopBar({
-  eyebrow, title, spoken, left, right,
-}: { eyebrow?: string; title: ReactNode; spoken: Speech; left?: ReactNode; right?: ReactNode }) {
+  eyebrow, title, spoken, left, right, host,
+}: {
+  eyebrow?: string;
+  title: ReactNode;
+  spoken: Speech;
+  left?: ReactNode;
+  right?: ReactNode;
+  host?: CharacterId | 'both';
+}) {
+  const hosts: CharacterId[] = host === 'both' ? ['jabari', 'jamila'] : host ? [host] : [];
   return (
     <header className="topbar">
       <div className="topbar-slot">{left}</div>
@@ -56,7 +68,15 @@ export function TopBar({
         {eyebrow && <div className="eyebrow">{eyebrow}</div>}
         <div className="title-row">
           <h1 className="title">{title}</h1>
-          <HearIt text={spoken} small />
+          {hosts.length ? (
+            <span className="duo">
+              {hosts.map(h => (
+                <Buddy key={h} who={h} size={72} label="Hear it" onClick={() => speak(spoken)} />
+              ))}
+            </span>
+          ) : (
+            <HearIt text={spoken} small />
+          )}
         </div>
       </div>
       <div className="topbar-slot">{right}</div>

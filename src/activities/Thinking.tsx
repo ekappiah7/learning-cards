@@ -10,6 +10,7 @@ import { ChoiceTiles, useAnswer, useLater, useSayOnShow } from '../components/Ch
 import { Shape } from '../components/Shape';
 import { shuffle } from './util';
 import type { ActivityProps } from './index';
+import { sfx } from '../sound';
 
 // ---------- shared helpers ----------
 
@@ -250,11 +251,16 @@ export function Sorting({ area, activity, profile }: ActivityProps) {
       setPlaced(nextPlaced);
       setWrong(null);
       if (card.items.every(x => nextPlaced[x.id] !== undefined)) {
+        sfx('right');
         speak('All sorted!');
         later(() => praise(), 1200);
-      } else speak(card.bins[bin].name);
+      } else {
+        sfx('pop');
+        speak(card.bins[bin].name);
+      }
     } else {
       setWrong(w => ({ id, n: (w?.n ?? 0) + 1 }));
+      sfx('wrong');
       speak('Try again');
     }
   };

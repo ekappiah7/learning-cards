@@ -9,6 +9,10 @@ import { AreaPage } from './screens/AreaPage';
 import { Reward } from './screens/Reward';
 import { Parent } from './screens/Parent';
 import { ACTIVITIES } from './activities';
+import { AREA_HOST } from './data/characters';
+import { setHost } from './speech';
+import { playMusic } from './sound';
+import type { Theme } from './data/music';
 
 export function App() {
   const route = useRoute();
@@ -21,6 +25,12 @@ export function App() {
     if (needsProfile) navigate({ name: 'profiles' });
   }, [needsProfile]);
 
+  // Each area has its own tune; the start screens share one; the parent
+  // corner is quiet.
+  const theme: Theme | null =
+    route.name === 'parent' ? null : 'areaId' in route ? ((route.areaId as Theme) ?? 'home') : 'home';
+  useEffect(() => playMusic(theme), [theme]);
+
   return (
     <>
       <Backdrop />
@@ -29,6 +39,8 @@ export function App() {
   );
 
   function screen() {
+    // The character who speaks on this screen.
+    setHost('areaId' in route ? (AREA_HOST[route.areaId] ?? 'jabari') : 'jabari');
     if (route.name === 'parent') return <Parent />;
     if (route.name === 'profiles' || !current) return <Profiles />;
     if (route.name === 'area') {

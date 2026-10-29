@@ -28,7 +28,8 @@ export function Home({ profile }: { profile: Profile }) {
       <TopBar
         eyebrow={`Hello, ${profile.name}`}
         title={<>What shall we <em>play?</em></>}
-        spoken={['Hello,', { name: profile.name, id: profile.id }, 'What shall we play?']}
+        spoken={[{ by: 'jabari', say: ['Hello,', { name: profile.name, id: profile.id }] }, { by: 'jamila', say: 'What shall we play?' }]}
+        host="both"
         left={<BackButton label="Change player" onClick={() => navigate({ name: 'profiles' })} />}
         right={<PlayerChip profile={profile} />}
       />

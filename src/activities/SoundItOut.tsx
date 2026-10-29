@@ -8,6 +8,7 @@ import { ActivityFrame, useRound } from '../components/ActivityFrame';
 import { Picture } from '../components/pictures';
 import { pickRound } from './util';
 import type { ActivityProps } from './index';
+import { sfx } from '../sound';
 
 // Tap each letter to hear its sound, then Blend to hear the sounds run
 // together into the word. The picture appears once the word is blended.
@@ -45,6 +46,7 @@ export function SoundItOut({ area, activity, profile }: ActivityProps) {
       n[k] = true;
       return n;
     });
+    sfx('pop');
     speak([{ letter: letters[k] }], { rate: 0.7 });
   };
 
@@ -58,13 +60,15 @@ export function SoundItOut({ area, activity, profile }: ActivityProps) {
         setTapped(letters.map(() => true));
         timer.current = setTimeout(() => {
           setBlended(true);
+          sfx('right');
           speak(item.word);
           timer.current = setTimeout(() => praise(), 1200);
         }, 250);
         return;
       }
       setActive(k);
-      speak([{ letter: letters[k] }], { rate: 0.7 });
+      sfx('pop');
+    speak([{ letter: letters[k] }], { rate: 0.7 });
       timer.current = setTimeout(() => step(k + 1), 750);
     };
     step(0);

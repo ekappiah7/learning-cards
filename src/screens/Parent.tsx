@@ -49,20 +49,32 @@ export function Parent() {
       />
 
       <section className="panel parent-section">
-        <h2>Voice</h2>
-        <div className="parent-row">
-          <span>{settings.voice ? 'The app reads everything aloud.' : 'The app is silent.'}</span>
-          <button
-            type="button"
-            role="switch"
-            aria-checked={settings.voice}
-            className="switch"
-            onClick={() => setSettings({ voice: !settings.voice })}
-          >
-            {settings.voice ? <Volume2 size={28} strokeWidth={1.5} aria-hidden /> : <VolumeX size={28} strokeWidth={1.5} aria-hidden />}
-            {settings.voice ? 'Voice on' : 'Voice off'}
-          </button>
-        </div>
+        <h2>Sound</h2>
+        {(
+          [
+            ['voice', 'Voice', 'Jabari and Jamila read everything aloud.'],
+            ['music', 'Music', 'Gentle background tunes, quieter while someone is talking.'],
+            ['sounds', 'Sound effects', 'Taps, claps, chimes and the star fanfare.'],
+          ] as const
+        ).map(([key, label, note]) => (
+          <div key={key} className="parent-row">
+            <span>
+              <strong>{label}</strong>
+              <span className="parent-note"> {note}</span>
+            </span>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={settings[key]}
+              aria-label={label}
+              className="switch"
+              onClick={() => setSettings({ [key]: !settings[key] })}
+            >
+              {settings[key] ? <Volume2 size={28} strokeWidth={1.5} aria-hidden /> : <VolumeX size={28} strokeWidth={1.5} aria-hidden />}
+              {settings[key] ? 'On' : 'Off'}
+            </button>
+          </div>
+        ))}
       </section>
 
       <section className="panel parent-section">

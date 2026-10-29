@@ -9,6 +9,7 @@ import { ActivityFrame, ROUND_SIZE, useRound } from '../components/ActivityFrame
 import { ChoiceTiles, useAnswer, useLater, useSayOnShow } from '../components/Choices';
 import { shuffle } from './util';
 import type { ActivityProps } from './index';
+import { sfx } from '../sound';
 
 // ---------- shared helpers ----------
 
@@ -36,6 +37,7 @@ function useCountAlong(onStep: (k: number) => void, onDone: (n: number) => void)
         return;
       }
       onStep(k);
+      sfx('pop');
       speak(String(k), { rate: 0.8 });
       t.current = setTimeout(() => step(k + 1), 700);
     };
@@ -93,6 +95,7 @@ export function CountDots({ area, activity, profile }: ActivityProps) {
   const tapDot = () => {
     along.cancel();
     if (counted >= item.n) return;
+    sfx('pop');
     speak(String(counted + 1));
     setCounted(counted + 1);
   };

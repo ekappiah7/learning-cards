@@ -22,6 +22,7 @@ export function Profiles() {
         eyebrow="Learning cards"
         title={<>Who is <em>playing?</em></>}
         spoken="Who is playing?"
+        host="jabari"
         right={<HoldToOpen label="Parent corner" onOpen={() => navigate({ name: 'parent' })} />}
       />
 

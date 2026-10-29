@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import type { Level, ModuleColor } from './data/areas';
 import { setVoiceEnabled } from './speech';
+import { setMusicEnabled, setSoundsEnabled } from './sound';
 
 // All app state lives in localStorage on this device. Nothing is sent anywhere.
 
@@ -9,17 +10,20 @@ export type Profile = {
   name: string;
   color: ModuleColor;
   stars: Record<string, number>; // key: `${areaId}/${activityId}`
+  seen?: string[]; // lessons already watched, same keys
 };
 
 export type Settings = {
   voice: boolean;
+  music: boolean;
+  sounds: boolean;
   levels: Record<string, number>; // difficulty per area, 1 (easy) to 3
 };
 
 type Saved = { version: 1; profiles: Profile[]; currentId: string | null; settings: Settings };
 
 const KEY = 'learning-cards:v1';
-const EMPTY: Saved = { version: 1, profiles: [], currentId: null, settings: { voice: true, levels: {} } };
+const EMPTY: Saved = { version: 1, profiles: [], currentId: null, settings: { voice: true, music: true, sounds: true, levels: {} } };
 
 function load(): Saved {
   try {
@@ -54,6 +58,7 @@ type Store = {
   updateProfile: (id: string, patch: Partial<Pick<Profile, 'name' | 'color'>>) => void;
   selectProfile: (id: string | null) => void;
   awardStar: (areaId: string, activityId: string) => void;
+  markSeen: (key: string) => void;
   setSettings: (patch: Partial<Settings>) => void;
 };
 
@@ -64,6 +69,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => save(data), [data]);
   useEffect(() => setVoiceEnabled(data.settings.voice), [data.settings.voice]);
+  useEffect(() => setMusicEnabled(data.settings.music), [data.settings.music]);
+  useEffect(() => setSoundsEnabled(data.settings.sounds), [data.settings.sounds]);
 
   const addProfile = useCallback((name: string, color: ModuleColor) => {
     const p: Profile = { id: newId(), name: name.trim(), color, stars: {} };
@@ -85,6 +92,13 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
+  const markSeen = useCallback((key: string) => {
+    setData(d => ({
+      ...d,
+      profiles: d.profiles.map(p => (p.id === d.currentId && !p.seen?.includes(key) ? { ...p, seen: [...(p.seen ?? []), key] } : p)),
+    }));
+  }, []);
+
   const setSettings = useCallback((patch: Partial<Settings>) => {
     setData(d => ({ ...d, settings: { ...d.settings, ...patch } }));
   }, []);
@@ -98,9 +112,10 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       updateProfile,
       selectProfile,
       awardStar,
+      markSeen,
       setSettings,
     }),
-    [data, addProfile, updateProfile, selectProfile, awardStar, setSettings],
+    [data, addProfile, updateProfile, selectProfile, awardStar, markSeen, setSettings],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

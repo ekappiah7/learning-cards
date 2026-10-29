@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
-import { ArrowLeft, ArrowRight, RotateCcw, Star } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Clapperboard, RotateCcw, Star } from 'lucide-react';
 import { moduleVar, type Activity, type Area } from '../data/areas';
 import { navigate } from '../router';
 import { speak, stop, type Speech } from '../speech';
 import { useStore, type Profile } from '../store';
 import { BackButton, TopBar } from './ui';
 import { PlayerChip } from '../screens/Home';
+import { AREA_HOST } from '../data/characters';
+import { LessonPlayer, hasLesson } from '../lessons/LessonPlayer';
 
 // Items per round before the reward screen.
 export const ROUND_SIZE = 6;
@@ -62,6 +64,15 @@ type Props = {
 export function ActivityFrame(p: Props) {
   const color = moduleVar(p.area.color);
   const last = p.index >= p.total - 1;
+  const { markSeen } = useStore();
+
+  // The "Watch first" lesson plays by itself the first time a child opens
+  // this activity, and any time from the Watch button.
+  const lessonKey = `${p.area.id}/${p.activity.id}`;
+  const [watching, setWatching] = useState(() => hasLesson(lessonKey) && !p.profile.seen?.includes(lessonKey));
+  useEffect(() => {
+    if (watching) markSeen(lessonKey);
+  }, [watching, lessonKey, markSeen]);
 
   // Keep the latest handlers in a ref so the key listener is added once.
   const h = useRef(p);
@@ -96,8 +107,26 @@ export function ActivityFrame(p: Props) {
         eyebrow={p.eyebrow}
         title={p.title}
         spoken={p.spoken}
+        host={AREA_HOST[p.area.id]}
         left={<BackButton label={p.area.title} onClick={() => navigate({ name: 'area', areaId: p.area.id })} />}
-        right={<PlayerChip profile={p.profile} />}
+        right={
+          <span className="topbar-right">
+            {hasLesson(lessonKey) && (
+              <button
+                type="button"
+                className="icon-btn watch-btn"
+                aria-label="Watch first"
+                onClick={() => {
+                  stop();
+                  setWatching(true);
+                }}
+              >
+                <Clapperboard size={34} strokeWidth={1.5} aria-hidden />
+              </button>
+            )}
+            <PlayerChip profile={p.profile} />
+          </span>
+        }
       />
 
       {p.toolbar}
@@ -172,6 +201,17 @@ export function ActivityFrame(p: Props) {
           )}
         </button>
       </nav>
+
+      {watching && (
+        <LessonPlayer
+          lessonKey={lessonKey}
+          title={p.activity.title}
+          onClose={() => {
+            setWatching(false);
+            speak(p.spoken);
+          }}
+        />
+      )}
     </div>
   );
 }

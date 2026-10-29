@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { speak, type Speech } from '../speech';
+import { sfx } from '../sound';
 
 // Shared pick-the-answer logic: a wrong choice wobbles and says "Try
 // again", a right one stays lit. There is no failure state.
@@ -17,9 +18,11 @@ export function useAnswer() {
     if (value === answer) {
       setSolved(true);
       setWrong(null);
+      sfx('right');
       onRight();
     } else {
       setWrong(w => ({ value, n: (w?.n ?? 0) + 1 }));
+      sfx('wrong');
       speak('Try again');
     }
   };
