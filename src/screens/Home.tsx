@@ -33,13 +33,13 @@ export function Home({ profile }: { profile: Profile }) {
         left={<BackButton label="Change player" onClick={() => navigate({ name: 'profiles' })} />}
         right={<PlayerChip profile={profile} />}
       />
-      <div className="grid fill cols-2">
-        {AREAS.map(a => (
+      <div className="grid fill areas">
+        {AREAS.map((a, i) => (
           <button
             key={a.id}
             type="button"
             className="area-tile"
-            style={{ background: moduleVar(a.color) }}
+            style={{ background: moduleVar(a.color), ['--i' as string]: i }}
             onClick={() => {
               speak(a.spoken);
               navigate({ name: 'area', areaId: a.id });

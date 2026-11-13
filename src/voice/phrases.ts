@@ -3,8 +3,14 @@
 // the chosen voice. Imports use .ts extensions so the recording script can
 // load this file directly with Node.
 import { AREAS } from '../data/areas.ts';
-import { CLAP_SENTENCES, CLAP_WORDS, CVC_WORDS, FIRST_SOUND_WORDS, LETTER_SOUNDS } from '../data/reading.ts';
-import { COLOURS, SHAPES } from '../data/thinking.ts';
+import {
+  CLAP_SENTENCES, CLAP_WORDS, CVC_WORDS, FIRST_SOUND_WORDS, LETTER_SOUNDS, PICTURE_WORDS, RHYME_GROUPS, TRICKY_WORDS,
+  WORD_FAMILIES,
+} from '../data/reading.ts';
+import { ALPHABET, LETTERS, letterIsFor, letterName } from '../data/letters.ts';
+import { STORIES } from '../data/stories.ts';
+import { GEO, shapeLine, type GeoKind } from '../data/shapes.ts';
+import { COLOURS, GROUPS, SHAPES } from '../data/thinking.ts';
 import { MEMORY_WORDS, SIMON_PADS, STAMPS } from '../data/play.ts';
 import { LESSONS } from '../data/lessons.ts';
 
@@ -35,6 +41,9 @@ export const line = {
   binChoice: (a: string, b: string) => `${a} or ${b}?`,
   oddWhy: (why: string) => `Yes! That one is ${why}.`,
   stamp: (shape: string) => `${shape} stamp`,
+  takeQuestion: (a: number, b: number) => `${a} take away ${b} is?`,
+  takeAnswer: (a: number, b: number, left: number) => `${a} take away ${b} is ${left}!`,
+  group: (n: number) => `Group ${n}`,
 };
 
 export const PRAISE = ['Well done!', 'Brilliant!', 'Great job!', 'You did it!', 'Super!', 'Fantastic!'];
@@ -50,6 +59,18 @@ const FIXED = [
   'Watch the colours, then copy them.', 'Your turn!', 'You copied it!', 'Oops! Watch again.',
   'Draw and stamp. Pick a colour, then draw or stamp.', 'Undo', 'New page', 'Pen',
   'big', 'small', 'bigger', 'smaller', 'a different colour', 'a different shape',
+  // Letters
+  'Trace the letter', 'Use your finger to trace the letter.', 'Which letter says', 'Find the small letter', 'Find the big letter',
+  'What comes after', 'What comes before', 'Tap the letter to hear its sound.',
+  // Words
+  'Build the word', 'What sound is missing?', 'Which word rhymes with', 'rhymes with', 'Make new words. Tap a letter.',
+  'You made new words!', 'Read the word. Find the picture.', 'Find the word',
+  // Stories
+  'Put the words in order.', 'The end!', 'Read it with me.', 'Your turn to read.',
+  // Numbers, thinking, play
+  'Find the number', 'Tap from smallest to biggest.', 'Tap from biggest to smallest.', 'All in order!',
+  'Pop the balloons that say', 'You popped them all!', 'Tap the bars to make music.', 'Listen to my tune.',
+  'How many sides?', 'How many corners?', 'You found them all!', 'Find the shadow that fits.',
 ];
 
 const range = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
@@ -88,7 +109,41 @@ export function allPhrases(): { normal: string[]; slow: string[] } {
   CVC_WORDS.forEach(w => add(w.word));
   FIRST_SOUND_WORDS.forEach(w => add(w.word));
 
+  // Letters
+  for (const l of ALPHABET) {
+    add(letterName(l));
+    add(letterIsFor(l));
+    add(LETTERS[l].word);
+  }
+  range(1, 5).forEach(n => add(line.group(n)));
+
+  // Words
+  PICTURE_WORDS.forEach(add);
+  RHYME_GROUPS.flat().forEach(add);
+  for (const f of WORD_FAMILIES) {
+    slow.add(f.ending);
+    f.starts.forEach(st => add(st + f.ending));
+  }
+  Object.values(TRICKY_WORDS).flat().forEach(add);
+
+  // Stories
+  for (const st of STORIES) {
+    for (const pg of st.pages) {
+      add(pg.text);
+      pg.text.split(' ').forEach(w => add(clean(w)));
+    }
+    for (const q of st.questions) {
+      add(q.ask);
+      q.options.forEach(add);
+    }
+  }
+
   // Numbers
+  for (const a of range(2, 10))
+    for (const b of range(1, a - 1)) {
+      add(line.takeQuestion(a, b));
+      add(line.takeAnswer(a, b, a - b));
+    }
   range(0, 20).forEach(n => add(String(n)));
   range(0, 100).forEach(n => add(line.hasStars(n)));
   (['more', 'fewer'] as const).forEach(a => add(line.whichHas(a)));
@@ -130,6 +185,21 @@ export function allPhrases(): { normal: string[]; slow: string[] } {
   for (const a of colourNames) for (const b of colourNames) if (a !== b) add(line.binChoice(a, b));
   for (const a of shapeNames) for (const b of shapeNames) if (a !== b) add(line.binChoice(`${a}s`, `${b}s`));
   add(line.binChoice('big', 'small'));
+  for (const g of GROUPS) {
+    add(g.ask);
+    g.items.forEach(add);
+  }
+
+  // Shapes
+  for (const k of Object.keys(GEO) as GeoKind[]) {
+    add(GEO[k].name);
+    add(shapeLine.find(k));
+    if (GEO[k].points) {
+      add(shapeLine.sides(k));
+      add(shapeLine.corners(k));
+    }
+  }
+  (['circle', 'square', 'rectangle', 'triangle'] as const).forEach(k => add(shapeLine.tapAll(k)));
 
   // Play
   MEMORY_WORDS.forEach(w => add(w.word));

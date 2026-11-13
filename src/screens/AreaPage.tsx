@@ -19,14 +19,15 @@ export function AreaPage({ area, profile }: { area: Area; profile: Profile }) {
         left={<BackButton label="Home" onClick={() => navigate({ name: 'home' })} />}
         right={<PlayerChip profile={profile} />}
       />
-      <div className={`grid fill${area.activities.length === 4 ? ' cols-2' : ''}`}>
-        {area.activities.map(act => {
+      <div className={`grid fill acts n${area.activities.length}`}>
+        {area.activities.map((act, i) => {
           const ready = starKey(area.id, act.id) in ACTIVITIES;
           return (
             <button
               key={act.id}
               type="button"
               className={`card-tile${ready ? '' : ' soon'}`}
+              style={{ ['--i' as string]: i }}
               aria-label={ready ? act.title : `${act.title}, coming soon`}
               onClick={() => {
                 if (!ready) {

@@ -4,16 +4,14 @@
 // falls back to the device's speech engine, picking a natural British voice
 // of the speaker's gender. The characters' faces follow who is talking.
 
-import lewis from './voice/lewis.json';
-import alice from './voice/alice.json';
 import { LETTER_SOUNDS } from './data/reading';
 import { CHARACTERS, otherCharacter, type CharacterId } from './data/characters';
 import { PRAISE, phraseKey, type Part, type Speech } from './voice/phrases';
 import { recKey, recordingUrl } from './voice/recordings';
+import { clipMs, clipUrl } from './voice/packs';
 
 export type { Speech } from './voice/phrases';
 
-const CLIPS: Record<'lewis' | 'alice', Record<string, string>> = { lewis, alice };
 const TTS_RATE = 0.8;
 const GAP_MS = 60;
 
@@ -119,12 +117,8 @@ if (typeof window !== 'undefined') {
 
 function clipFor(by: CharacterId, text: string) {
   const key = phraseKey(text);
-  const own = CHARACTERS[by].voice;
-  const file = CLIPS[own][key];
-  if (file) return `./voice/${own}/${file}`;
-  // Not recorded in this voice yet: use the other voice rather than a robot.
-  const other = CHARACTERS[otherCharacter(by)].voice;
-  return CLIPS[other][key] ? `./voice/${other}/${CLIPS[other][key]}` : null;
+  // If a line is not recorded in this voice, use the other voice rather than a robot.
+  return clipUrl(CHARACTERS[by].voice, key) ?? clipUrl(CHARACTERS[otherCharacter(by)].voice, key);
 }
 
 function itemsFor(speech: Speech, rate: number, by: CharacterId): Item[] {
@@ -211,6 +205,12 @@ export function speakAndWait(speech: Speech, opts: SpeakOptions = {}): Promise<v
     }
     playItems(itemsFor(speech, opts.rate ?? TTS_RATE, opts.by ?? host), mine, finish);
   });
+}
+
+// How long a plain line takes to say in the host's (or given) voice, in
+// milliseconds. Used to light up words in time with a sentence.
+export function lineMs(text: string, by: CharacterId = host) {
+  return clipMs(CHARACTERS[by].voice, phraseKey(text));
 }
 
 export function stop() {

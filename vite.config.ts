@@ -2,15 +2,23 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
+// Shown in the parent corner so it is easy to tell which version a device has.
+const version = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
+
 // Relative base so the build works on GitHub Pages (/learning-cards/) and locally.
 export default defineConfig({
   base: './',
+  define: { __APP_VERSION__: JSON.stringify(version) },
   plugins: [
     react(),
-    // Installable app that works offline after the first visit. Every built
-    // file is cached; a new version is picked up the next time it opens.
+    // Installable app that works offline after the first visit. The service
+    // worker keeps only the small app shell; the recorded voices are fetched
+    // and kept by the app itself (src/voice/packs.ts), so one failed download
+    // can never block an update. src/update.ts decides when to switch to a
+    // new version.
     VitePWA({
-      registerType: 'autoUpdate',
+      registerType: 'prompt',
+      injectRegister: false,
       includeAssets: ['icons/favicon.svg', 'icons/apple-touch-icon.png'],
       manifest: {
         name: 'Learning Cards',
@@ -32,8 +40,10 @@ export default defineConfig({
       },
       workbox: {
         // woff files are skipped: every browser that can install the app uses woff2.
-        // mp3 covers the recorded voice, so speech works offline too.
-        globPatterns: ['**/*.{js,css,html,woff2,png,svg,mp3}'],
+        globPatterns: ['**/*.{js,css,html,woff2,png,svg}', 'voice/silence.mp3'],
+        cleanupOutdatedCaches: true,
+        // One-time help for devices on an old version; see public/sw-legacy.js.
+        importScripts: ['sw-legacy.js'],
         navigateFallback: 'index.html',
         // The design system's typography file also asks Google Fonts for its
         // fonts; keep a copy so that request works offline too.

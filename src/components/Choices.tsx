@@ -70,7 +70,7 @@ export function ChoiceTiles({
   className?: string;
 }) {
   return (
-    <div className="letter-row">
+    <div className="letter-row" data-answer={answer}>
       {options.map(v => {
         const lit = solved && v === answer;
         const shaking = wrong?.value === v;
@@ -81,6 +81,7 @@ export function ChoiceTiles({
             className={`${className}${lit ? ' lit' : ''}${shaking ? ' wobble' : ''}`}
             style={lit ? { background: color, borderColor: color } : undefined}
             aria-label={label(v)}
+            data-value={v}
             onClick={() => onChoose(v)}
           >
             {render ? render(v) : v}

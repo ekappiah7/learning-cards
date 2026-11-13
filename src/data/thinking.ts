@@ -1,4 +1,5 @@
 import type { ByLevel, ModuleColor } from './areas';
+import type { PictureName } from '../components/pictures';
 
 // Thinking content. Shapes and colours are drawn by the app, so they only
 // need a name to be spoken.
@@ -41,3 +42,17 @@ export const ODD_ONE_OUT_ITEMS: ByLevel<number> = { 1: 3, 2: 4, 3: 5 };
 // Sort them: one card per way of sorting, with this many shapes each.
 export const SORT_BY: ('colour' | 'shape' | 'size')[] = ['colour', 'shape', 'size'];
 export const SORT_ITEMS: ByLevel<number> = { 1: 4, 2: 6, 3: 8 };
+
+// Small to big: how many shapes to put in order.
+export const SIZE_ORDER_ITEMS: ByLevel<number> = { 1: 3, 2: 4, 3: 5 };
+
+// Which one belongs: each question has pictures that fit it. Wrong choices
+// are taken from the other groups, leaving out any in notWith.
+export const GROUPS: { ask: string; items: PictureName[]; notWith?: PictureName[] }[] = [
+  { ask: 'Which one is an animal?', items: ['cat', 'dog', 'pig', 'hen', 'fox', 'frog', 'fish', 'rabbit'] },
+  { ask: 'Which one can you eat?', items: ['apple', 'bun', 'cake', 'egg', 'jam', 'orange', 'pizza', 'ham'], notWith: ['fish', 'hen', 'pig', 'frog', 'rabbit'] },
+  { ask: 'Which one can you ride in?', items: ['bus', 'van', 'car', 'jet', 'rocket', 'train'] },
+  { ask: 'Which one can you wear?', items: ['hat', 'cap', 'wig', 'watch'] },
+  { ask: 'Which one is in the sky?', items: ['sun', 'moon', 'star', 'kite'], notWith: ['jet', 'rocket'] },
+];
+export const BELONGS_CHOICES: ByLevel<number> = { 1: 2, 2: 3, 3: 4 };

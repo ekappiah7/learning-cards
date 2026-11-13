@@ -163,6 +163,14 @@ export function setSoundsEnabled(on: boolean) {
 
 // ---------- sound effects ----------
 
+// One clear note, for the music maker.
+export function playNote(midi: number, seconds = 0.7) {
+  const c = audio();
+  if (!c || !sfxGain || c.state !== 'running') return;
+  note(sfxGain, midi, c.currentTime + 0.01, seconds, 'triangle', 0.6);
+  note(sfxGain, midi + 12, c.currentTime + 0.01, seconds * 0.6, 'sine', 0.15);
+}
+
 export type Sfx = 'tap' | 'right' | 'wrong' | 'star' | 'clap' | 'flip' | 'pop' | 'whoosh' | `pad${0 | 1 | 2 | 3}`;
 
 const PADS = [72, 76, 79, 84]; // Copy the colours: one note per pad

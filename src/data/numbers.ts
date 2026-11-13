@@ -33,3 +33,17 @@ export const ADD: ByLevel<{ maxTotal: number }> = {
 
 // How many number tiles to choose from.
 export const NUMBER_CHOICES: ByLevel<number> = { 1: 2, 2: 3, 3: 4 };
+
+// Find the number: which numbers can be asked.
+export const FIND_NUMBER: ByLevel<{ min: number; max: number }> = {
+  1: { min: 1, max: 5 },
+  2: { min: 1, max: 10 },
+  3: { min: 1, max: 20 },
+};
+
+// Take away: the biggest starting number.
+export const TAKE_AWAY: ByLevel<{ maxStart: number }> = {
+  1: { maxStart: 5 },
+  2: { maxStart: 10 },
+  3: { maxStart: 10 },
+};

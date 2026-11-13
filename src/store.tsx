@@ -25,13 +25,28 @@ type Saved = { version: 1; profiles: Profile[]; currentId: string | null; settin
 const KEY = 'learning-cards:v1';
 const EMPTY: Saved = { version: 1, profiles: [], currentId: null, settings: { voice: true, music: true, sounds: true, levels: {} } };
 
+// Activities that moved to another area keep their stars.
+const MOVED: Record<string, string> = {
+  'reading/first-sound': 'letters/first-sound',
+  'reading/clap-sentences': 'stories/clap-sentences',
+};
+
+function migrate(p: Profile): Profile {
+  const stars: Record<string, number> = {};
+  for (const [k, n] of Object.entries(p.stars ?? {})) {
+    const key = MOVED[k] ?? k;
+    stars[key] = (stars[key] ?? 0) + n;
+  }
+  return { ...p, stars, seen: p.seen?.map(k => MOVED[k] ?? k) };
+}
+
 function load(): Saved {
   try {
     const raw = localStorage.getItem(KEY);
     if (!raw) return EMPTY;
     const data = JSON.parse(raw) as Saved;
     if (data?.version !== 1 || !Array.isArray(data.profiles)) return EMPTY;
-    return { ...EMPTY, ...data, settings: { ...EMPTY.settings, ...data.settings } };
+    return { ...EMPTY, ...data, profiles: data.profiles.map(migrate), settings: { ...EMPTY.settings, ...data.settings } };
   } catch {
     return EMPTY;
   }

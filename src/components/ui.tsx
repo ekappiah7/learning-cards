@@ -1,7 +1,9 @@
 import { useRef, useState, type ReactNode } from 'react';
 import {
-  ArrowLeft, AudioLines, BookOpen, Brush, CircleDot, Copy, Ear, Gamepad2, Hand, Hash, Layers, Lock,
-  MessageSquareText, MoveRight, Music, Plus, Puzzle, Scale, SearchX, Shapes, Volume2,
+  ALargeSmall, ArrowDownAZ, ArrowLeft, ArrowUpNarrowWide, AudioLines, Blend, Blocks, BookOpen, BookOpenText, Brush,
+  CaseSensitive, CircleDashed, CircleDot, Copy, Ear, Gamepad2, Group, Hand, Hash, Images, Layers, LibraryBig, Lock,
+  MessageSquareText, Minus, MoveRight, Music, Network, PartyPopper, PenLine, Pentagon, Piano, Plus, Puzzle, Rows3, Scale,
+  ScanSearch, Search, SearchX, Shapes, Smile, Sparkles, Target, Volume2, Zap,
   type LucideProps,
 } from 'lucide-react';
 import type { IconName } from '../data/areas';
@@ -10,8 +12,10 @@ import { Buddy } from './Buddy';
 import { speak, type Speech } from '../speech';
 
 const ICONS = {
-  AudioLines, BookOpen, Brush, CircleDot, Copy, Ear, Gamepad2, Hand, Hash, Layers,
-  MessageSquareText, MoveRight, Music, Plus, Puzzle, Scale, SearchX, Shapes,
+  ALargeSmall, ArrowDownAZ, ArrowUpNarrowWide, AudioLines, Blend, Blocks, BookOpen, BookOpenText, Brush, CaseSensitive,
+  CircleDashed, CircleDot, Copy, Ear, Gamepad2, Group, Hand, Hash, Images, Layers, LibraryBig, MessageSquareText, Minus,
+  MoveRight, Music, Network, PartyPopper, PenLine, Pentagon, Piano, Plus, Puzzle, Rows3, Scale, ScanSearch, Search,
+  SearchX, Shapes, Smile, Sparkles, Target, Zap,
 } satisfies Record<IconName, unknown>;
 
 export function Icon({ name, size = 48, ...rest }: { name: IconName } & LucideProps) {
@@ -25,6 +29,10 @@ export function Backdrop() {
       <span />
       <span />
       <span />
+      <svg className="drift d1" viewBox="0 0 100 100"><path d="M50 8L94 88H6Z" /></svg>
+      <svg className="drift d2" viewBox="0 0 100 100"><rect x="12" y="12" width="76" height="76" rx="4" /></svg>
+      <svg className="drift d3" viewBox="0 0 100 100"><path d="M50 6l13 27 30 4-22 21 5 30-26-14-26 14 5-30L7 37l30-4z" /></svg>
+      <svg className="drift d4" viewBox="0 0 100 100"><path d="M94 50L72 88H28L6 50L28 12H72Z" /></svg>
     </div>
   );
 }

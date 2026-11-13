@@ -5,10 +5,12 @@ import { navigate } from '../router';
 import { speak } from '../speech';
 import { useStore } from '../store';
 import { HoldToOpen, TopBar } from '../components/ui';
+import { usePackState } from '../voice/packs';
 
 export function Profiles() {
   const { profiles, addProfile, selectProfile } = useStore();
   const [adding, setAdding] = useState(false);
+  const packs = usePackState();
 
   const pick = (id: string, name: string) => {
     selectProfile(id);
@@ -50,6 +52,11 @@ export function Profiles() {
       </div>
 
       {profiles.length === 0 && <p className="empty-note">A grown-up can add each child here.</p>}
+      {!packs.finished && packs.total > 0 && (
+        <p className="empty-note small" role="status">
+          {packs.failed ? 'Open the app while online to finish saving the voices.' : `Getting ready to play without internet: ${packs.done} of ${packs.total}`}
+        </p>
+      )}
 
       {adding && (
         <ProfileDialog

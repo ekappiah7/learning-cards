@@ -9,9 +9,12 @@ import { AreaPage } from './screens/AreaPage';
 import { Reward } from './screens/Reward';
 import { Parent } from './screens/Parent';
 import { ACTIVITIES } from './activities';
+import { PictureGallery } from './components/pictures';
 import { AREA_HOST } from './data/characters';
 import { setHost } from './speech';
 import { playMusic } from './sound';
+import { TUNES } from './data/music';
+import { setSafeToUpdate } from './update';
 import type { Theme } from './data/music';
 
 export function App() {
@@ -28,8 +31,12 @@ export function App() {
   // Each area has its own tune; the start screens share one; the parent
   // corner is quiet.
   const theme: Theme | null =
-    route.name === 'parent' ? null : 'areaId' in route ? ((route.areaId as Theme) ?? 'home') : 'home';
+    route.name === 'parent' ? null : 'areaId' in route && route.areaId in TUNES ? (route.areaId as Theme) : 'home';
   useEffect(() => playMusic(theme), [theme]);
+
+  // A new version is only switched in on these screens, never mid-activity.
+  const safe = route.name === 'profiles' || route.name === 'home';
+  useEffect(() => setSafeToUpdate(safe), [safe]);
 
   return (
     <>
@@ -39,6 +46,7 @@ export function App() {
   );
 
   function screen() {
+    if (window.location.hash === '#/pictures') return <PictureGallery />;
     // The character who speaks on this screen.
     setHost('areaId' in route ? (AREA_HOST[route.areaId] ?? 'jabari') : 'jabari');
     if (route.name === 'parent') return <Parent />;

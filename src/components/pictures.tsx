@@ -1,24 +1,149 @@
-import {
-  Apple, Bed, BookOpen, Bus, Cake, Car, Cat, Cloud, CookingPot, Dog, Drum, Egg, Fan, Fish, Flower, Gift,
-  Guitar, Ham, Heart, House, Key, Lamp, Leaf, Lock, Map, Moon, Mouse, Nut, Pen, Piano, Pin, Pizza, Rabbit,
-  Rat, Rocket, Star, Sun, Table, Tent, TrainFront, Umbrella, Van, Watch, Worm, Bug,
-  type LucideProps,
-} from 'lucide-react';
+// Colour cartoon pictures for words, drawn as flat SVG (no photos or emoji).
+// Each picture is the inside of a 100 x 100 drawing. Add an entry to ART to
+// use a new picture name in the data files.
 
-// Line pictures for words, drawn with Lucide icons (no photos or emoji).
-// Add an entry here to use a new picture name in the data files.
-const PICTURES = {
-  apple: Apple, bed: Bed, book: BookOpen, bug: Bug, bus: Bus, cake: Cake, car: Car, cat: Cat, cloud: Cloud,
-  dog: Dog, drum: Drum, egg: Egg, fan: Fan, fish: Fish, flower: Flower, gift: Gift, guitar: Guitar, ham: Ham,
-  heart: Heart, house: House, key: Key, lamp: Lamp, leaf: Leaf, lock: Lock, map: Map, moon: Moon, mouse: Mouse,
-  nut: Nut, pen: Pen, piano: Piano, pin: Pin, pizza: Pizza, pot: CookingPot, rabbit: Rabbit, rat: Rat,
-  rocket: Rocket, star: Star, sun: Sun, table: Table, tent: Tent, train: TrainFront, umbrella: Umbrella,
-  van: Van, watch: Watch, worm: Worm,
+// Module colours plus a few extra tones pictures need (browns, greys, skin).
+const K = '#24031F', W = '#FFFFFF', C = '#FCF8EF', R = '#E8634A', T = '#3ECFB2', I = '#7C6FE8', G = '#4CAF7D';
+const B = '#4BAFD6', P = '#D45B8A', Q = '#F2A0B8', O = '#E8963A', Y = '#F2C94C', Z = '#E0AC2B', N = '#9C6B3F';
+const L = '#C99A6B', S = '#A9AFB8', H = '#DADDE2', D = '#5A0B4D', U = '#822E73', M = '#B07A4E', X = '#7E848E';
+
+const eye = (x: number, y: number, r = 3.5) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${K}"/>`;
+const eyes = (x1: number, x2: number, y: number, r = 3.5) => eye(x1, y, r) + eye(x2, y, r);
+const smile = (x: number, y: number, w = 8) =>
+  `<path d="M${x - w} ${y}q${w} ${w * 0.8} ${w * 2} 0" stroke="${K}" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+const wheel = (x: number, y: number, r = 9) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${K}"/><circle cx="${x}" cy="${y}" r="${r * 0.45}" fill="${S}"/>`;
+const tile = (text: string, fill: string, size: number) =>
+  `<rect x="10" y="10" width="80" height="80" rx="16" fill="${fill}"/><text x="50" y="${50 + size * 0.36}" font-size="${size}" font-weight="700" text-anchor="middle" fill="${K}" font-family="DM Sans, system-ui, sans-serif">${text}</text>`;
+
+const ART = {
+  // ---------- animals ----------
+  cat: `<path d="M22 44L26 12L48 32Z" fill="${O}"/><path d="M78 44L74 12L52 32Z" fill="${O}"/><path d="M28 36L30 21L41 31Z" fill="${Q}"/><path d="M72 36L70 21L59 31Z" fill="${Q}"/><circle cx="50" cy="58" r="32" fill="${O}"/>${eyes(38, 62, 54)}<path d="M46 63h8l-4 5z" fill="${P}"/><path d="M50 68q-5 6-10 2M50 68q5 6 10 2" stroke="${K}" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M20 60h13M21 68l12-3M80 60H67M79 68l-12-3" stroke="${K}" stroke-width="1.5" stroke-linecap="round"/>`,
+  dog: `<ellipse cx="22" cy="48" rx="11" ry="24" fill="${N}" transform="rotate(12 22 48)"/><ellipse cx="78" cy="48" rx="11" ry="24" fill="${N}" transform="rotate(-12 78 48)"/><circle cx="50" cy="54" r="31" fill="${L}"/><ellipse cx="50" cy="68" rx="17" ry="13" fill="${C}"/>${eyes(39, 61, 50)}<ellipse cx="50" cy="62" rx="6" ry="4.5" fill="${K}"/><path d="M50 66v4q-5 5-9 1M50 70q5 5 9 1" stroke="${K}" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M46 73h8v5a4 4 0 0 1-8 0z" fill="${P}"/>`,
+  pig: `<path d="M22 38L18 14L42 26Z" fill="${P}"/><path d="M78 38L82 14L58 26Z" fill="${P}"/><circle cx="50" cy="56" r="33" fill="${Q}"/>${eyes(38, 62, 48)}<ellipse cx="50" cy="66" rx="15" ry="11" fill="${P}"/><ellipse cx="45" cy="66" rx="2.5" ry="4" fill="${K}"/><ellipse cx="55" cy="66" rx="2.5" ry="4" fill="${K}"/>`,
+  hen: `<path d="M22 60L6 40L28 48Z" fill="${W}" stroke="${H}" stroke-width="2"/><path d="M42 82v12M54 82v12M36 94h12M48 94h12" stroke="${O}" stroke-width="3" stroke-linecap="round"/><ellipse cx="48" cy="62" rx="28" ry="22" fill="${W}" stroke="${H}" stroke-width="2"/><circle cx="67" cy="24" r="5" fill="${R}"/><circle cx="74" cy="22" r="5" fill="${R}"/><circle cx="72" cy="38" r="14" fill="${W}" stroke="${H}" stroke-width="2"/><path d="M84 34l12 4-12 4z" fill="${O}"/><circle cx="80" cy="50" r="4" fill="${R}"/>${eye(75, 36, 2.5)}<path d="M34 58q12 14 26 0q-10-8-26 0z" fill="${H}"/>`,
+  chick: `<path d="M40 84v10M60 84v10M34 94h12M54 94h12" stroke="${O}" stroke-width="3" stroke-linecap="round"/><path d="M50 30q-5-12 2-14q-1 8 5 4q-1 7-7 10z" fill="${Y}"/><ellipse cx="22" cy="62" rx="7" ry="12" fill="${Z}"/><ellipse cx="78" cy="62" rx="7" ry="12" fill="${Z}"/><ellipse cx="50" cy="58" rx="30" ry="28" fill="${Y}"/>${eyes(40, 60, 48)}<path d="M44 56h12l-6 8z" fill="${O}"/>`,
+  fox: `<path d="M18 40L20 10L42 30Z" fill="${O}"/><path d="M82 40L80 10L58 30Z" fill="${O}"/><path d="M14 40Q50 20 86 40L50 90Z" fill="${O}"/><path d="M14 40L50 90L38 56Z" fill="${W}"/><path d="M86 40L50 90L62 56Z" fill="${W}"/>${eyes(38, 62, 50)}<circle cx="50" cy="85" r="5" fill="${K}"/>`,
+  rat: `<path d="M20 64Q2 60 6 42" stroke="${Q}" stroke-width="3.5" fill="none" stroke-linecap="round"/><ellipse cx="44" cy="62" rx="28" ry="18" fill="${S}"/><ellipse cx="72" cy="62" rx="18" ry="12" fill="${S}"/><circle cx="62" cy="46" r="10" fill="${S}"/><circle cx="62" cy="46" r="5.5" fill="${Q}"/>${eye(78, 58, 2.5)}<circle cx="90" cy="64" r="3.5" fill="${P}"/><path d="M84 66l10 4M84 68l8 7" stroke="${K}" stroke-width="1"/><path d="M32 80v6M52 80v6" stroke="${S}" stroke-width="5" stroke-linecap="round"/>`,
+  mouse: `<circle cx="26" cy="32" r="18" fill="${S}"/><circle cx="74" cy="32" r="18" fill="${S}"/><circle cx="26" cy="32" r="11" fill="${Q}"/><circle cx="74" cy="32" r="11" fill="${Q}"/><circle cx="50" cy="60" r="30" fill="${S}"/>${eyes(40, 60, 56)}<circle cx="50" cy="70" r="4.5" fill="${P}"/><path d="M26 66h14M27 74l13-3M74 66H60M73 74l-13-3" stroke="${K}" stroke-width="1.5" stroke-linecap="round"/>`,
+  rabbit: `<ellipse cx="38" cy="24" rx="9" ry="22" fill="${H}"/><ellipse cx="62" cy="24" rx="9" ry="22" fill="${H}"/><ellipse cx="38" cy="26" rx="4" ry="15" fill="${Q}"/><ellipse cx="62" cy="26" rx="4" ry="15" fill="${Q}"/><circle cx="50" cy="64" r="28" fill="${H}"/>${eyes(40, 60, 58)}<path d="M46 67h8l-4 5z" fill="${P}"/><rect x="46" y="74" width="8" height="8" rx="1.5" fill="${W}" stroke="${S}" stroke-width="1"/>`,
+  bat: `<path d="M50 44Q32 22 6 34Q16 42 13 56Q24 48 30 60Q40 52 50 64Q60 52 70 60Q76 48 87 56Q84 42 94 34Q68 22 50 44Z" fill="${U}"/><path d="M40 38L42 24L50 36Z" fill="${D}"/><path d="M60 38L58 24L50 36Z" fill="${D}"/><circle cx="50" cy="46" r="13" fill="${D}"/><circle cx="45" cy="45" r="3.2" fill="${W}"/><circle cx="55" cy="45" r="3.2" fill="${W}"/>${eyes(45, 55, 45, 1.4)}`,
+  bug: `<path d="M38 26L30 12M62 26L70 12" stroke="${K}" stroke-width="3" stroke-linecap="round"/><path d="M20 50H8M20 64H8M22 78L12 84M80 50H92M80 64H92M78 78L88 84" stroke="${K}" stroke-width="3" stroke-linecap="round"/><circle cx="50" cy="32" r="14" fill="${K}"/><ellipse cx="50" cy="62" rx="30" ry="28" fill="${R}"/><path d="M50 34V90" stroke="${K}" stroke-width="3"/><circle cx="36" cy="52" r="5" fill="${K}"/><circle cx="64" cy="52" r="5" fill="${K}"/><circle cx="34" cy="72" r="5" fill="${K}"/><circle cx="66" cy="72" r="5" fill="${K}"/><circle cx="45" cy="28" r="2" fill="${W}"/><circle cx="55" cy="28" r="2" fill="${W}"/>`,
+  fish: `<path d="M70 50L94 30V70Z" fill="${O}"/><path d="M38 32Q52 14 62 34Z" fill="#D07E22"/><ellipse cx="44" cy="50" rx="34" ry="22" fill="${O}"/><path d="M52 32V68M63 37V63" stroke="${W}" stroke-width="4" opacity="0.6"/><circle cx="26" cy="44" r="5.5" fill="${W}"/>${eye(25, 44, 2.6)}<path d="M14 56q6 4 10 0" stroke="${K}" stroke-width="2" fill="none" stroke-linecap="round"/>`,
+  frog: `<circle cx="32" cy="30" r="14" fill="${G}"/><circle cx="68" cy="30" r="14" fill="${G}"/><ellipse cx="50" cy="58" rx="36" ry="28" fill="${G}"/><circle cx="32" cy="30" r="8.5" fill="${W}"/><circle cx="68" cy="30" r="8.5" fill="${W}"/>${eyes(32, 68, 31, 4)}<path d="M30 62Q50 80 70 62" stroke="${K}" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="45" cy="52" r="1.5" fill="${K}"/><circle cx="55" cy="52" r="1.5" fill="${K}"/>`,
+  worm: `<path d="M10 72Q22 40 38 64T64 62T86 42" stroke="${Q}" stroke-width="13" fill="none" stroke-linecap="round"/><path d="M28 56l4 8M54 56l2 8" stroke="${P}" stroke-width="2.5" stroke-linecap="round"/>${eye(85, 39, 2.5)}`,
+
+  // ---------- people ----------
+  man: `<path d="M32 46L20 68M68 46L80 68" stroke="${M}" stroke-width="7" stroke-linecap="round"/><path d="M36 68h12v26H36zM52 68h12v26H52z" fill="#3B3F5C"/><path d="M32 44q18-8 36 0v28H32z" fill="${B}"/><circle cx="50" cy="24" r="15" fill="${M}"/><path d="M35 22a15 15 0 0 1 30 0q-15-9-30 0z" fill="${K}"/>${eyes(44, 56, 25, 2.2)}${smile(50, 30, 5)}`,
+  queen: `<path d="M22 62Q18 30 50 28Q82 30 78 62Q80 80 70 86H30Q20 80 22 62Z" fill="${K}"/><circle cx="50" cy="58" r="24" fill="${M}"/>${eyes(42, 58, 56, 2.8)}${smile(50, 65, 7)}<circle cx="35" cy="64" r="4" fill="${P}" opacity="0.6"/><circle cx="65" cy="64" r="4" fill="${P}" opacity="0.6"/><path d="M28 36L24 10L38 22L50 6L62 22L76 10L72 36Z" fill="${Y}"/><circle cx="50" cy="27" r="3.5" fill="${R}"/><circle cx="36" cy="29" r="2.5" fill="${B}"/><circle cx="64" cy="29" r="2.5" fill="${B}"/>`,
+  leg: `<rect x="36" y="8" width="24" height="54" fill="${M}"/><rect x="32" y="6" width="32" height="20" rx="3" fill="${B}"/><rect x="35" y="52" width="26" height="16" fill="${W}" stroke="${H}" stroke-width="1.5"/><path d="M34 66h28q22 2 26 14v6H34z" fill="${R}"/><rect x="34" y="82" width="54" height="6" rx="2" fill="${K}"/>`,
+
+  // ---------- food ----------
+  apple: `<path d="M50 30Q50 16 58 10" stroke="${N}" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M56 16Q70 6 80 16Q66 24 56 16Z" fill="${G}"/><path d="M50 30C40 16 14 20 14 50C14 74 32 92 44 90C48 89 52 89 56 90C68 92 86 74 86 50C86 20 60 16 50 30Z" fill="${R}"/><ellipse cx="30" cy="46" rx="5" ry="10" fill="${W}" opacity="0.35"/>`,
+  orange: `<circle cx="50" cy="56" r="34" fill="${O}"/><path d="M50 24Q52 12 60 10" stroke="${N}" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M52 20Q66 8 78 20Q64 30 52 20Z" fill="${G}"/><ellipse cx="34" cy="44" rx="6" ry="10" fill="${W}" opacity="0.3" transform="rotate(30 34 44)"/><circle cx="56" cy="62" r="1.5" fill="#C9761E"/><circle cx="66" cy="50" r="1.5" fill="#C9761E"/><circle cx="46" cy="74" r="1.5" fill="#C9761E"/>`,
+  egg: `<path d="M50 12C68 12 80 44 80 60A30 28 0 0 1 20 60C20 44 32 12 50 12Z" fill="${C}" stroke="#DCCBA2" stroke-width="3"/><ellipse cx="38" cy="40" rx="6" ry="11" fill="${W}" transform="rotate(20 38 40)"/>`,
+  bun: `<path d="M10 64a40 34 0 0 1 80 0z" fill="${L}"/><rect x="10" y="62" width="80" height="14" rx="7" fill="#B5854F"/><ellipse cx="36" cy="46" rx="3.5" ry="1.8" fill="${C}" transform="rotate(-20 36 46)"/><ellipse cx="52" cy="40" rx="3.5" ry="1.8" fill="${C}"/><ellipse cx="66" cy="48" rx="3.5" ry="1.8" fill="${C}" transform="rotate(20 66 48)"/><ellipse cx="46" cy="54" rx="3.5" ry="1.8" fill="${C}" transform="rotate(10 46 54)"/>`,
+  cake: `<rect x="10" y="82" width="80" height="7" rx="3.5" fill="${H}"/><rect x="16" y="44" width="68" height="40" rx="6" fill="${L}"/><path d="M16 50a6 6 0 0 1 6-6h56a6 6 0 0 1 6 6v8q-6 8-12 0q-5 8-11 0q-6 8-11 0q-6 8-11 0q-6 8-13 0z" fill="${P}"/><rect x="47" y="24" width="6" height="20" fill="${B}"/><path d="M50 10q7 8 0 14q-7-6 0-14z" fill="${O}"/>`,
+  jam: `<rect x="26" y="30" width="48" height="58" rx="10" fill="${R}"/><rect x="28" y="16" width="44" height="14" rx="4" fill="${Y}"/><rect x="34" y="46" width="32" height="24" rx="4" fill="${C}"/><circle cx="50" cy="60" r="7" fill="${R}"/><path d="M45 53q5-6 10 0z" fill="${G}"/>`,
+  ham: `<path d="M70 62L88 80" stroke="#E9DDBF" stroke-width="8" stroke-linecap="round"/><circle cx="91" cy="78" r="5" fill="#E9DDBF"/><circle cx="86" cy="85" r="5" fill="#E9DDBF"/><path d="M18 60Q10 30 40 22Q70 16 78 44Q84 70 52 78Q26 84 18 60Z" fill="${P}"/><ellipse cx="46" cy="50" rx="19" ry="15" fill="${Q}"/><circle cx="46" cy="50" r="5" fill="${C}"/>`,
+  nut: `<rect x="47" y="14" width="6" height="14" rx="2" fill="${N}"/><path d="M28 46h44q0 34-22 44q-22-10-22-44z" fill="${L}"/><path d="M24 46a26 20 0 0 1 52 0z" fill="${N}"/><path d="M34 38l6-6M46 40l6-10M60 38l4-6" stroke="#7A5230" stroke-width="2" stroke-linecap="round"/>`,
+  pizza: `<path d="M10 22Q50 4 90 22L50 94Z" fill="${Y}"/><path d="M10 22Q50 4 90 22L85 31Q50 15 15 31Z" fill="${L}"/><circle cx="40" cy="40" r="6" fill="${R}"/><circle cx="61" cy="43" r="6" fill="${R}"/><circle cx="50" cy="62" r="6" fill="${R}"/><circle cx="50" cy="30" r="2.5" fill="${G}"/><circle cx="54" cy="76" r="2.5" fill="${G}"/>`,
+
+  // ---------- things that go ----------
+  bus: `<rect x="6" y="26" width="88" height="48" rx="8" fill="${R}"/><rect x="12" y="34" width="14" height="14" rx="2" fill="${H}"/><rect x="30" y="34" width="14" height="14" rx="2" fill="${H}"/><rect x="48" y="34" width="14" height="14" rx="2" fill="${H}"/><rect x="66" y="34" width="22" height="14" rx="2" fill="${H}"/><rect x="6" y="56" width="88" height="5" fill="${Y}"/>${wheel(26, 76)}${wheel(74, 76)}<circle cx="90" cy="67" r="3" fill="${Y}"/>`,
+  van: `<path d="M8 34h54v40H8z" fill="${B}"/><path d="M62 44h18l12 14v16H62z" fill="${B}"/><path d="M66 48h12l8 10H66z" fill="${H}"/><rect x="14" y="40" width="18" height="12" rx="2" fill="${H}"/><rect x="38" y="40" width="18" height="12" rx="2" fill="${H}"/>${wheel(28, 76)}${wheel(72, 76)}`,
+  car: `<path d="M22 50L32 30H64L76 50Z" fill="${T}"/><path d="M27 48L34 34H47V48ZM53 34H62L70 48H53Z" fill="${H}"/><rect x="6" y="48" width="88" height="24" rx="10" fill="${T}"/>${wheel(28, 74, 10)}${wheel(72, 74, 10)}<circle cx="90" cy="58" r="3" fill="${Y}"/>`,
+  jet: `<g transform="rotate(-18 50 50)"><path d="M46 50L30 20h12L62 50Z" fill="${B}"/><path d="M46 50L30 80h12L62 50Z" fill="${B}"/><path d="M14 50L6 32h9l11 18Z" fill="${R}"/><ellipse cx="52" cy="50" rx="42" ry="9" fill="${H}" stroke="${S}" stroke-width="2"/><circle cx="76" cy="48" r="3" fill="${B}"/><circle cx="64" cy="48" r="2.5" fill="${B}"/><circle cx="54" cy="48" r="2.5" fill="${B}"/></g>`,
+  train: `<rect x="26" y="12" width="14" height="24" fill="${K}"/><rect x="21" y="8" width="24" height="8" rx="3" fill="${K}"/><rect x="50" y="18" width="34" height="30" rx="4" fill="${G}"/><rect x="57" y="25" width="20" height="13" rx="2" fill="${H}"/><rect x="12" y="34" width="72" height="38" rx="8" fill="${G}"/><rect x="8" y="68" width="84" height="7" rx="3" fill="${R}"/>${wheel(28, 80, 10)}${wheel(54, 80, 10)}${wheel(78, 82, 8)}<circle cx="16" cy="48" r="4" fill="${Y}"/>`,
+  rocket: `<path d="M30 50L14 74H30ZM70 50L86 74H70Z" fill="${R}"/><path d="M40 66Q50 98 60 66Z" fill="${O}"/><path d="M45 66Q50 84 55 66Z" fill="${Y}"/><path d="M50 4Q72 26 70 62H30Q28 26 50 4Z" fill="${H}" stroke="${S}" stroke-width="2"/><path d="M50 4Q61 15 66 30H34Q39 15 50 4Z" fill="${R}"/><circle cx="50" cy="44" r="8" fill="${B}" stroke="${S}" stroke-width="2"/><rect x="36" y="60" width="28" height="7" rx="2" fill="${S}"/>`,
+  kite: `<path d="M50 74Q40 84 52 90T48 99" stroke="${K}" stroke-width="2" fill="none"/><path d="M50 6L78 40L50 74L22 40Z" fill="${R}"/><path d="M50 6L22 40L50 74Z" fill="${Y}"/><path d="M50 6V74M22 40H78" stroke="${C}" stroke-width="2"/><path d="M44 82l9 3-7 5z" fill="${B}"/>`,
+
+  // ---------- at home ----------
+  hat: `<rect x="30" y="20" width="40" height="46" rx="4" fill="${I}"/><rect x="12" y="62" width="76" height="11" rx="5.5" fill="${I}"/><rect x="30" y="50" width="40" height="9" fill="${Y}"/>`,
+  cap: `<path d="M62 60Q96 58 96 68Q96 75 60 72Z" fill="${R}"/><path d="M16 66a34 32 0 0 1 68 0z" fill="${B}"/><circle cx="50" cy="33" r="4" fill="${R}"/><path d="M50 34V66" stroke="${W}" stroke-width="2" opacity="0.5"/>`,
+  wig: `<path d="M18 76Q6 30 50 14Q94 30 82 76Q76 88 70 72Q72 46 50 44Q28 46 30 72Q24 88 18 76Z" fill="${P}"/><circle cx="24" cy="42" r="11" fill="${P}"/><circle cx="76" cy="42" r="11" fill="${P}"/><circle cx="36" cy="24" r="11" fill="${P}"/><circle cx="64" cy="24" r="11" fill="${P}"/><circle cx="50" cy="18" r="11" fill="${P}"/><circle cx="20" cy="62" r="9" fill="${P}"/><circle cx="80" cy="62" r="9" fill="${P}"/>`,
+  bag: `<path d="M36 30v-6a14 14 0 0 1 28 0v6" stroke="${U}" stroke-width="6" fill="none"/><rect x="20" y="28" width="60" height="60" rx="14" fill="${I}"/><rect x="32" y="54" width="36" height="22" rx="5" fill="${U}"/><rect x="44" y="50" width="12" height="10" rx="2" fill="${Y}"/>`,
+  watch: `<rect x="38" y="4" width="24" height="92" rx="6" fill="${B}"/><circle cx="50" cy="50" r="26" fill="${K}"/><circle cx="50" cy="50" r="20" fill="${C}"/><path d="M50 50V36M50 50L60 56" stroke="${K}" stroke-width="3" stroke-linecap="round"/>`,
+  mat: `<path d="M10 42H3M10 48H3M10 54H3M10 60H3M10 66H3M90 42h7M90 48h7M90 54h7M90 60h7M90 66h7" stroke="${G}" stroke-width="2.5" stroke-linecap="round"/><rect x="10" y="38" width="80" height="32" rx="3" fill="${G}"/><rect x="17" y="45" width="66" height="18" rx="2" fill="none" stroke="${Y}" stroke-width="3"/>`,
+  rug: `<ellipse cx="50" cy="56" rx="44" ry="26" fill="${R}"/><ellipse cx="50" cy="56" rx="32" ry="18" fill="${Y}"/><ellipse cx="50" cy="56" rx="19" ry="10" fill="${B}"/>`,
+  bed: `<rect x="6" y="28" width="8" height="58" rx="3" fill="${N}"/><rect x="86" y="44" width="8" height="42" rx="3" fill="${N}"/><rect x="10" y="60" width="80" height="16" fill="${N}"/><rect x="12" y="46" width="76" height="18" rx="5" fill="${W}" stroke="${H}" stroke-width="2"/><rect x="15" y="38" width="24" height="15" rx="7" fill="${H}"/><path d="M42 46h46v18H42z" fill="${B}"/>`,
+  table: `<rect x="16" y="44" width="8" height="44" fill="${L}"/><rect x="76" y="44" width="8" height="44" fill="${L}"/><rect x="14" y="44" width="72" height="7" fill="#7A5230"/><rect x="8" y="34" width="84" height="11" rx="3" fill="${N}"/>`,
+  lamp: `<rect x="46" y="54" width="8" height="30" fill="${N}"/><ellipse cx="50" cy="86" rx="22" ry="6" fill="${N}"/><path d="M30 14h40l12 40H18z" fill="${Y}"/>`,
+  fan: `<rect x="46" y="64" width="8" height="22" fill="${S}"/><rect x="30" y="84" width="40" height="8" rx="4" fill="${S}"/><circle cx="50" cy="40" r="31" fill="${H}" stroke="${S}" stroke-width="3"/>${[0, 120, 240].map(a => `<path d="M50 40Q38 18 52 12Q64 24 50 40Z" fill="${B}" transform="rotate(${a} 50 40)"/>`).join('')}<circle cx="50" cy="40" r="5" fill="${K}"/>`,
+  pan: `<rect x="62" y="50" width="34" height="9" rx="4.5" fill="${N}"/><circle cx="38" cy="55" r="30" fill="${K}"/><circle cx="38" cy="55" r="23" fill="#4A4A55"/><circle cx="38" cy="55" r="13" fill="${W}"/><circle cx="40" cy="54" r="5.5" fill="${Y}"/>`,
+  pot: `<path d="M38 24q-5-7 0-14M62 24q5-7 0-14" stroke="${S}" stroke-width="3" fill="none" stroke-linecap="round"/><rect x="4" y="52" width="16" height="7" rx="3" fill="${K}"/><rect x="80" y="52" width="16" height="7" rx="3" fill="${K}"/><rect x="18" y="40" width="64" height="46" rx="8" fill="#5B6270"/><rect x="14" y="36" width="72" height="10" rx="5" fill="${X}"/><ellipse cx="50" cy="32" rx="8" ry="5" fill="${K}"/>`,
+  lid: `<path d="M12 64a38 28 0 0 1 76 0z" fill="${S}"/><rect x="8" y="62" width="84" height="9" rx="4.5" fill="${X}"/><rect x="46" y="28" width="8" height="10" fill="${K}"/><ellipse cx="50" cy="27" rx="10" ry="6" fill="${K}"/><path d="M24 56q6-12 18-14" stroke="${W}" stroke-width="3" fill="none" opacity="0.6" stroke-linecap="round"/>`,
+  mug: `<path d="M38 26q-5-7 0-14M54 26q-5-7 0-14" stroke="${S}" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M70 44h8a12 12 0 0 1 0 24h-8" stroke="${B}" stroke-width="7" fill="none"/><rect x="22" y="34" width="50" height="52" rx="8" fill="${B}"/><rect x="22" y="48" width="50" height="8" fill="${W}" opacity="0.5"/>`,
+  cup: `<ellipse cx="48" cy="80" rx="38" ry="7" fill="${H}"/><path d="M72 46h6a9 9 0 0 1 0 18h-8" stroke="${T}" stroke-width="5" fill="none"/><path d="M20 40h56v10a28 26 0 0 1-56 0z" fill="${T}"/><ellipse cx="48" cy="40" rx="28" ry="5" fill="#8A5A3A"/>`,
+  jug: `<path d="M66 40h10a10 14 0 0 1 0 28h-8" stroke="${I}" stroke-width="6" fill="none"/><path d="M30 24L16 30L31 38Z" fill="${I}"/><path d="M30 22h36l6 64H26z" fill="${I}"/><rect x="28" y="18" width="40" height="8" rx="3" fill="${U}"/><path d="M34 48h28" stroke="${W}" stroke-width="4" opacity="0.4" stroke-linecap="round"/>`,
+  can: `<ellipse cx="50" cy="82" rx="24" ry="7" fill="${S}"/><rect x="26" y="22" width="48" height="60" fill="${H}"/><rect x="26" y="36" width="48" height="32" fill="${R}"/><circle cx="50" cy="52" r="9" fill="${Y}"/><ellipse cx="50" cy="22" rx="24" ry="7" fill="${S}"/><ellipse cx="50" cy="22" rx="18" ry="4.5" fill="${H}"/>`,
+  bin: `<path d="M24 34h52l-6 56H30z" fill="${S}"/><rect x="18" y="24" width="64" height="10" rx="4" fill="${X}"/><rect x="42" y="16" width="16" height="8" rx="3" fill="${X}"/><path d="M40 44l2 38M50 44v38M60 44l-2 38" stroke="${H}" stroke-width="3" stroke-linecap="round"/>`,
+  mop: `<rect x="47" y="6" width="6" height="58" rx="2" fill="${N}"/><rect x="34" y="56" width="32" height="8" rx="3" fill="${B}"/><path d="M32 62h36l8 30q-7 4-11-2q-5 6-10 0q-5 6-10 0q-5 6-10 0q-5 6-11 2z" fill="${H}" stroke="${S}" stroke-width="2"/>`,
+  tub: `<circle cx="30" cy="34" r="8" fill="${B}" opacity="0.5"/><circle cx="46" cy="28" r="6" fill="${B}" opacity="0.5"/><circle cx="58" cy="36" r="7" fill="${B}" opacity="0.5"/><circle cx="40" cy="40" r="7" fill="${W}" stroke="${H}" stroke-width="1.5"/><path d="M82 46V26q0-8 8-8" stroke="${S}" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M26 78l-4 12M74 78l4 12" stroke="${S}" stroke-width="5" stroke-linecap="round"/><path d="M8 44h84v8a26 26 0 0 1-26 26H34A26 26 0 0 1 8 52z" fill="${W}" stroke="${S}" stroke-width="3"/>`,
+  lock: `<path d="M30 48V32a20 20 0 0 1 40 0v16" stroke="${S}" stroke-width="8" fill="none"/><rect x="18" y="44" width="64" height="46" rx="8" fill="${Z}"/><circle cx="50" cy="62" r="6" fill="${K}"/><rect x="47" y="62" width="6" height="14" rx="2" fill="${K}"/>`,
+  key: `<circle cx="30" cy="50" r="18" fill="none" stroke="${Z}" stroke-width="9"/><path d="M48 50H90M76 50V64M88 50V62" stroke="${Z}" stroke-width="8" stroke-linecap="round"/>`,
+  bell: `<rect x="46" y="6" width="8" height="12" rx="4" fill="${Z}"/><circle cx="50" cy="82" r="7" fill="${N}"/><path d="M50 14a26 26 0 0 1 26 26v22l10 14H14l10-14V40a26 26 0 0 1 26-26z" fill="${Z}"/>`,
+  gift: `<rect x="16" y="40" width="68" height="48" rx="4" fill="${I}"/><rect x="12" y="30" width="76" height="14" rx="4" fill="${U}"/><rect x="44" y="30" width="12" height="58" fill="${Y}"/><path d="M50 30Q30 6 24 20Q24 30 50 30Q70 6 76 20Q76 30 50 30Z" fill="${Y}"/>`,
+  box: `<path d="M14 42L4 30L40 18L50 30Z" fill="${L}"/><path d="M86 42L96 30L60 18L50 30Z" fill="${L}"/><path d="M14 42L50 30L86 42L50 56Z" fill="#7A5230"/><path d="M14 42V74L50 90V56Z" fill="${L}"/><path d="M86 42V74L50 90V56Z" fill="${N}"/>`,
+  book: `<path d="M50 28Q30 16 8 24V78Q30 70 50 82Z" fill="${B}"/><path d="M50 28Q70 16 92 24V78Q70 70 50 82Z" fill="${B}"/><path d="M50 32Q32 22 14 28V72Q32 66 50 76Z" fill="${C}"/><path d="M50 32Q68 22 86 28V72Q68 66 50 76Z" fill="${C}"/><path d="M22 40q10-3 20 2M22 50q10-3 20 2M58 42q10-5 20-2M58 52q10-5 20-2" stroke="${S}" stroke-width="2" fill="none"/>`,
+  pen: `<g transform="rotate(40 50 50)"><rect x="44" y="12" width="12" height="60" rx="2" fill="${B}"/><rect x="44" y="12" width="12" height="9" rx="2" fill="${K}"/><path d="M44 72h12l-6 16z" fill="${H}"/><path d="M48 82h4l-2 6z" fill="${K}"/></g>`,
+  pin: `<path d="M50 52V94" stroke="${S}" stroke-width="4" stroke-linecap="round"/><path d="M34 16h32l-6 16v8l10 12H30l10-12v-8z" fill="${R}"/>`,
+  map: `<path d="M10 24L36 16L64 24L90 16V76L64 84L36 76L10 84Z" fill="${C}" stroke="${L}" stroke-width="2"/><path d="M36 16V76M64 24V84" stroke="${L}" stroke-width="2"/><path d="M20 64Q30 40 46 52T74 36" stroke="${R}" stroke-width="3" fill="none" stroke-dasharray="5 5"/><path d="M72 28l8 8M80 28l-8 8" stroke="${R}" stroke-width="3.5" stroke-linecap="round"/><circle cx="20" cy="64" r="4" fill="${G}"/>`,
+  net: `<path d="M62 62L92 92" stroke="${N}" stroke-width="7" stroke-linecap="round"/><circle cx="40" cy="40" r="28" fill="${C}" stroke="${N}" stroke-width="5"/><path d="M19 30h42M14 42h52M20 54h40M28 18v44M40 14v52M52 18v44" stroke="${S}" stroke-width="1.5"/>`,
+  web: `<g stroke="${S}" stroke-width="2" fill="none"><path d="M50 6V94M6 50H94M19 19L81 81M81 19L19 81"/><path d="M50 20L71 29L80 50L71 71L50 80L29 71L20 50L29 29Z"/><path d="M50 35L61 39L65 50L61 61L50 65L39 61L35 50L39 39Z"/></g><path d="M58 31l-7-4M58 37l-8 2M70 31l7-4M70 37l8 2" stroke="${K}" stroke-width="1.5"/><circle cx="64" cy="35" r="6.5" fill="${K}"/>`,
+  top: `<rect x="46" y="10" width="8" height="28" rx="3" fill="${B}"/><path d="M18 36h64L50 92Z" fill="${R}"/><path d="M25 48h50l-7 12H32z" fill="${Y}"/>`,
+  ball: `<circle cx="50" cy="50" r="40" fill="${R}"/><path d="M50 10A40 40 0 0 1 50 90A22 40 0 0 0 50 10Z" fill="${Y}"/><path d="M50 10A40 40 0 0 0 50 90A22 40 0 0 1 50 10Z" fill="${B}"/><circle cx="50" cy="50" r="6" fill="${W}"/>`,
+  yoyo: `<path d="M50 6V34" stroke="${K}" stroke-width="2"/><circle cx="50" cy="6" r="4" fill="none" stroke="${K}" stroke-width="2"/><circle cx="50" cy="64" r="30" fill="${R}"/><circle cx="50" cy="64" r="18" fill="${Y}"/><circle cx="50" cy="64" r="6" fill="${R}"/>`,
+  drum: `<path d="M30 6L50 30M70 6L52 30" stroke="${N}" stroke-width="4" stroke-linecap="round"/><path d="M14 38V70a36 12 0 0 0 72 0V38z" fill="${R}"/><path d="M14 46L32 78M32 50L50 82M50 50L68 80M68 48L86 72" stroke="${Y}" stroke-width="2.5"/><ellipse cx="50" cy="38" rx="36" ry="12" fill="${C}" stroke="${Z}" stroke-width="4"/>`,
+  guitar: `<rect x="46" y="8" width="8" height="46" fill="${N}"/><rect x="42" y="4" width="16" height="11" rx="2" fill="${K}"/><circle cx="50" cy="52" r="18" fill="${O}"/><circle cx="50" cy="74" r="22" fill="${O}"/><circle cx="50" cy="62" r="7" fill="${K}"/><rect x="42" y="82" width="16" height="4" fill="${K}"/><path d="M48 14V82M52 14V82" stroke="${C}" stroke-width="1"/>`,
+  piano: `<rect x="6" y="24" width="88" height="54" rx="5" fill="${K}"/>${[0, 1, 2, 3, 4, 5, 6].map(i => `<rect x="${11 + i * 11.3}" y="32" width="10" height="40" rx="1.5" fill="${C}"/>`).join('')}${[0, 1, 3, 4, 5].map(i => `<rect x="${18.6 + i * 11.3}" y="32" width="6.5" height="24" fill="${K}"/>`).join('')}`,
+  six: tile('6', B, 62),
+  ten: tile('10', G, 52),
+
+  // ---------- outdoors ----------
+  sun: `<g stroke="${Y}" stroke-width="6" stroke-linecap="round"><path d="M50 6V18M50 82V94M6 50H18M82 50H94M19 19L27 27M73 73L81 81M81 19L73 27M27 73L19 81"/></g><circle cx="50" cy="50" r="24" fill="${Y}"/>${eyes(42, 58, 46, 2.5)}${smile(50, 55, 8)}`,
+  moon: `<path d="M64 10A42 42 0 1 0 90 66A34 34 0 1 1 64 10Z" fill="${Y}"/><path d="M34 48q4 4 8 0" stroke="${K}" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M38 62q5 4 10 0" stroke="${K}" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M80 18l2.4 5 5.6.8-4 4 1 5.6-5-2.7-5 2.7 1-5.6-4-4 5.6-.8z" fill="${Y}"/>`,
+  star: `<path d="M50 6l13.6 27.6 30.4 4.4-22 21.4 5.2 30.2L50 75.4 22.8 89.6 28 59.4 6 38l30.4-4.4z" fill="${Y}"/>`,
+  tree: `<rect x="43" y="56" width="14" height="38" rx="3" fill="${N}"/><circle cx="50" cy="36" r="27" fill="${G}"/><circle cx="29" cy="48" r="17" fill="${G}"/><circle cx="71" cy="48" r="17" fill="${G}"/><circle cx="40" cy="30" r="3.5" fill="${R}"/><circle cx="62" cy="40" r="3.5" fill="${R}"/><circle cx="48" cy="52" r="3.5" fill="${R}"/>`,
+  leaf: `<path d="M14 86Q10 30 80 14Q90 70 30 84Q22 86 14 86Z" fill="${G}"/><path d="M16 84Q40 50 76 20" stroke="#2F8558" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M38 60l-2-14M52 46l-2-12M42 58l14 2M56 44l12 2" stroke="#2F8558" stroke-width="2" stroke-linecap="round"/>`,
+  log: `<path d="M34 38l-4-12" stroke="${N}" stroke-width="5" stroke-linecap="round"/><path d="M26 24q9-7 12 4q-9 3-12-4z" fill="${G}"/><rect x="10" y="36" width="68" height="34" rx="6" fill="${N}"/><ellipse cx="78" cy="53" rx="11" ry="17" fill="${L}"/><ellipse cx="78" cy="53" rx="6" ry="9.5" fill="none" stroke="${N}" stroke-width="2"/><path d="M20 48h22M30 60h26" stroke="#7A5230" stroke-width="2.5" stroke-linecap="round"/>`,
+  mud: `<circle cx="20" cy="40" r="4" fill="${N}"/><circle cx="78" cy="34" r="3" fill="${N}"/><circle cx="62" cy="30" r="2.5" fill="${N}"/><path d="M8 66Q6 50 28 52Q40 38 56 48Q80 42 90 58Q98 76 70 80Q40 88 18 80Q8 76 8 66Z" fill="${N}"/><ellipse cx="40" cy="62" rx="13" ry="4" fill="${L}" opacity="0.6"/>`,
+  nest: `<ellipse cx="36" cy="46" rx="10" ry="13" fill="${B}"/><ellipse cx="52" cy="42" rx="10" ry="13" fill="${C}" stroke="${H}" stroke-width="1.5"/><ellipse cx="66" cy="47" rx="10" ry="13" fill="${B}"/><path d="M8 52h84q-4 34-42 34T8 52Z" fill="${N}"/><path d="M16 60q18 8 34 0M40 74q20 6 40-8M22 70l14 8M58 62l18-4" stroke="${L}" stroke-width="2.5" fill="none" stroke-linecap="round"/>`,
+  hut: `<rect x="22" y="50" width="56" height="40" fill="${L}"/><path d="M8 54L50 12L92 54Z" fill="#C9A227"/><path d="M28 46l8-9M42 46l6-12M58 46l-4-12M72 46l-8-9" stroke="#A8841A" stroke-width="2.5" stroke-linecap="round"/><path d="M42 90V68a8 8 0 0 1 16 0v22z" fill="${N}"/>`,
+  house: `<rect x="64" y="18" width="9" height="18" fill="${N}"/><rect x="20" y="46" width="60" height="44" fill="${C}" stroke="${L}" stroke-width="2"/><path d="M10 50L50 14L90 50Z" fill="${R}"/><rect x="42" y="62" width="16" height="28" rx="2" fill="${N}"/><rect x="26" y="56" width="12" height="12" fill="${B}"/><rect x="62" y="56" width="12" height="12" fill="${B}"/>`,
+  tent: `<path d="M50 14V4" stroke="${N}" stroke-width="3"/><path d="M50 4l12 4-12 4z" fill="${R}"/><path d="M50 14L92 86H8Z" fill="${O}"/><path d="M50 14L68 86H32Z" fill="#B96F1F"/><path d="M50 36L60 86H40Z" fill="${K}"/>`,
+  umbrella: `<path d="M50 12V78a8 8 0 0 0 16 0" stroke="${N}" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M8 54A42 42 0 0 1 92 54Q85 46 78 54Q71 46 64 54Q57 46 50 54Q43 46 36 54Q29 46 22 54Q15 46 8 54Z" fill="${I}"/><path d="M50 12L36 52M50 12L64 52" stroke="${U}" stroke-width="2"/>`,
+  heart: `<path d="M50 88C10 60 8 32 28 22C40 16 48 24 50 32C52 24 60 16 72 22C92 32 90 60 50 88Z" fill="${R}"/><ellipse cx="32" cy="38" rx="5" ry="8" fill="${W}" opacity="0.35" transform="rotate(-30 32 38)"/>`,
+  zigzag: `<path d="M8 70L26 30L44 70L62 30L80 70L92 44" stroke="${I}" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
 };
 
-export type PictureName = keyof typeof PICTURES;
+export type PictureName = keyof typeof ART;
+export const PICTURE_NAMES = Object.keys(ART) as PictureName[];
 
-export function Picture({ name, size = 120, ...rest }: { name: PictureName } & LucideProps) {
-  const C = PICTURES[name];
-  return <C size={size} strokeWidth={1.5} aria-hidden {...rest} />;
+export function Picture({ name, size = 120, className }: { name: PictureName; size?: number | string; className?: string }) {
+  return (
+    <svg
+      className={`picture${className ? ` ${className}` : ''}`}
+      viewBox="0 0 100 100"
+      width={size}
+      height={size}
+      aria-hidden
+      dangerouslySetInnerHTML={{ __html: ART[name] }}
+    />
+  );
 }
+
+// Every picture with its name, at #/pictures. Handy when adding pictures.
+export function PictureGallery() {
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, 110px)', gap: 8, padding: 16, background: 'var(--surface-raised)' }}>
+      {PICTURE_NAMES.map(n => (
+        <div key={n} style={{ textAlign: 'center', fontSize: 14 }}>
+          <Picture name={n} size={96} />
+          <div>{n}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export const hasPicture = (name: string): name is PictureName => name in ART;

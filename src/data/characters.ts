@@ -10,8 +10,11 @@ export const CHARACTERS: Record<CharacterId, { name: string; animal: 'lion' | 'o
 
 // Who hosts each area. Screens outside an area are hosted by Jabari.
 export const AREA_HOST: Record<string, CharacterId> = {
+  letters: 'jamila',
   reading: 'jamila',
+  stories: 'jabari',
   numbers: 'jabari',
+  shapes: 'jabari',
   logic: 'jamila',
   play: 'jabari',
 };

@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Check, Mic, Pencil, Plus, Volume2, VolumeX } from 'lucide-react';
+import { Check, Mic, Pencil, Plus, RefreshCw, Volume2, VolumeX } from 'lucide-react';
 import { AREAS, LEVEL_NAMES, moduleVar, type Level } from '../data/areas';
-import { LETTER_EXAMPLES } from '../data/reading';
+import { LETTERS } from '../data/letters';
 import { navigate } from '../router';
 import { starKey, totalStars, useStore, type Profile } from '../store';
 import { BackButton, TopBar } from '../components/ui';
@@ -9,6 +9,8 @@ import { Recorder } from '../components/Recorder';
 import type { Speech } from '../speech';
 import { recKey, useRecordings } from '../voice/recordings';
 import { ProfileDialog } from './Profiles';
+import { usePackState } from '../voice/packs';
+import { APP_VERSION, checkForUpdate } from '../update';
 
 // For grown-ups: voice, players, progress and difficulty. Reached from the
 // "Who is playing?" screen with a press-and-hold.
@@ -17,6 +19,8 @@ export function Parent() {
   const [editing, setEditing] = useState<Profile | 'new' | null>(null);
   const [recording, setRecording] = useState<{ title: string; hint: string; key: string; current: Speech } | null>(null);
   const { has } = useRecordings();
+  const packs = usePackState();
+  const [updateNote, setUpdateNote] = useState('');
 
   const recordName = (p: Profile) =>
     setRecording({
@@ -28,7 +32,7 @@ export function Parent() {
   const recordLetter = (l: string) =>
     setRecording({
       title: `Letter ${l}`,
-      hint: `Say only the sound "${l}" makes at the start of "${LETTER_EXAMPLES[l]}", short and clean, without adding "uh" where you can.`,
+      hint: `Say only the sound "${l}" makes ${l === 'x' ? 'at the end of' : 'at the start of'} "${LETTERS[l].word}", short and clean, without adding "uh" where you can.`,
       key: recKey.letter(l),
       current: [{ letter: l }],
     });
@@ -47,6 +51,41 @@ export function Parent() {
         spoken="Parent corner"
         left={<BackButton label="Who is playing" onClick={() => navigate({ name: 'profiles' })} />}
       />
+
+      <section className="panel parent-section">
+        <h2>This app</h2>
+        <div className="parent-row">
+          <span>
+            <strong>Playing without internet</strong>
+            <span className="parent-note">
+              {' '}
+              {packs.finished
+                ? 'Ready. Everything is saved on this device.'
+                : packs.failed
+                  ? 'Some voices are not saved yet. Open the app while online to finish.'
+                  : `Saving the voices on this device: ${packs.done} of ${packs.total} parts.`}
+            </span>
+          </span>
+          <span className={`status-dot${packs.finished ? ' ok' : ''}`} aria-hidden />
+        </div>
+        <div className="parent-row">
+          <span>
+            <strong>Version</strong>
+            <span className="parent-note"> {APP_VERSION}. {updateNote}</span>
+          </span>
+          <button
+            type="button"
+            className="pill secondary small"
+            onClick={async () => {
+              setUpdateNote('Checking…');
+              const r = await checkForUpdate();
+              setUpdateNote(r === 'updating' ? 'Updating now…' : r === 'latest' ? 'This is the newest version.' : 'No internet, so it could not check.');
+            }}
+          >
+            <RefreshCw size={24} strokeWidth={1.5} aria-hidden /> Check for updates
+          </button>
+        </div>
+      </section>
 
       <section className="panel parent-section">
         <h2>Sound</h2>

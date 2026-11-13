@@ -9,7 +9,7 @@ export type Tune = {
   shaker?: boolean;           // soft off-beat shaker
 };
 
-export type Theme = 'home' | 'reading' | 'numbers' | 'logic' | 'play' | 'lesson';
+export type Theme = 'home' | 'letters' | 'reading' | 'stories' | 'numbers' | 'shapes' | 'logic' | 'play' | 'lesson';
 
 export const TUNES: Record<Theme, Tune> = {
   // Bright and welcoming, C major.
@@ -22,6 +22,41 @@ export const TUNES: Record<Theme, Tune> = {
       [72, 1], [74, 1], [71, 1], [74, 1], [72, 2], [0, 2],
     ],
     chords: [48, 53, 43, 48],
+    shaker: true,
+  },
+  // Skipping and sing-song, C major, for letters.
+  letters: {
+    bpm: 104,
+    melody: [
+      [72, 1], [72, 1], [79, 1], [79, 1], [81, 1], [81, 1], [79, 2],
+      [77, 1], [77, 1], [76, 1], [76, 1], [74, 1], [74, 1], [72, 2],
+      [79, 1], [79, 1], [77, 1], [77, 1], [76, 1], [76, 1], [74, 2],
+      [76, 1], [77, 1], [79, 1], [76, 1], [74, 1], [71, 1], [72, 2],
+    ],
+    chords: [48, 53, 48, 43, 48, 53, 43, 48],
+    shaker: true,
+  },
+  // Slow and dreamy, G major, for stories.
+  stories: {
+    bpm: 76,
+    melody: [
+      [74, 2], [79, 2], [78, 1], [76, 1], [74, 2],
+      [76, 2], [72, 2], [71, 4],
+      [74, 2], [76, 1], [78, 1], [79, 2], [83, 2],
+      [81, 1], [79, 1], [78, 2], [79, 4],
+    ],
+    chords: [43, 48, 50, 43],
+  },
+  // Bright and square, F major, for shapes.
+  shapes: {
+    bpm: 110,
+    melody: [
+      [65, 1], [69, 1], [72, 1], [69, 1], [65, 1], [69, 1], [72, 2],
+      [74, 1], [72, 1], [70, 1], [69, 1], [67, 2], [0, 2],
+      [69, 1], [72, 1], [77, 1], [72, 1], [74, 1], [72, 1], [70, 2],
+      [69, 1], [67, 1], [64, 1], [67, 1], [65, 2], [0, 2],
+    ],
+    chords: [41, 46, 48, 41],
     shaker: true,
   },
   // Calm and gentle, F major, for listening and reading.

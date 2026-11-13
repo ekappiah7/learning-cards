@@ -10,8 +10,11 @@ import './styles/app.css';
 import { App } from './App';
 import { StoreProvider } from './store';
 import { loadRecordings } from './voice/recordings';
+import { loadPacks } from './voice/packs';
+import './update';
 
 loadRecordings();
+void loadPacks();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

@@ -13,11 +13,11 @@ import { sfx } from '../sound';
 
 // ---------- shared helpers ----------
 
-const range = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
-const rand = (a: number, b: number) => a + Math.floor(Math.random() * (b - a + 1));
+export const range = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
+export const rand = (a: number, b: number) => a + Math.floor(Math.random() * (b - a + 1));
 
 // The answer plus nearby numbers inside [min, max], shuffled.
-function numberChoices(answer: number, min: number, max: number, count: number) {
+export function numberChoices(answer: number, min: number, max: number, count: number) {
   const near = shuffle(range(Math.max(min, answer - 3), Math.min(max, answer + 3)).filter(n => n !== answer));
   return shuffle([answer, ...near.slice(0, count - 1)]).map(String);
 }
@@ -25,7 +25,7 @@ function numberChoices(answer: number, min: number, max: number, count: number) 
 type Timer = ReturnType<typeof setTimeout>;
 
 // Lights dots one at a time, saying each number. Returns start and cancel.
-function useCountAlong(onStep: (k: number) => void, onDone: (n: number) => void) {
+export function useCountAlong(onStep: (k: number) => void, onDone: (n: number) => void) {
   const t = useRef<Timer>(undefined);
   const cancel = () => clearTimeout(t.current);
   useEffect(() => cancel, []);
@@ -48,7 +48,7 @@ function useCountAlong(onStep: (k: number) => void, onDone: (n: number) => void)
 
 // Dots arranged in rows, like a ten frame. Counted dots show their number.
 // `from` is the number of the first dot, so a second group can count on.
-function Dots({
+export function Dots({
   n, color, counted = 0, from = 1, cols = 5, size = 'l', onTap,
 }: { n: number; color: string; counted?: number; from?: number; cols?: number; size?: 'l' | 'm' | 's'; onTap?: () => void }) {
   return (

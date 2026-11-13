@@ -3,6 +3,8 @@ import { Hand, Pencil, Rabbit } from 'lucide-react';
 import { moduleVar, type ModuleColor } from '../data/areas';
 import { Picture } from '../components/pictures';
 import { Shape } from '../components/Shape';
+import { Geo } from '../components/Geo';
+import { HUNT_PICTURES } from '../data/shapes';
 
 // The animated scene for each lesson. A stage shows what belongs to the
 // current beat (line) of the script in src/data/lessons.ts: things appear,
@@ -310,11 +312,137 @@ function Draw({ beat }: StageProps) {
   );
 }
 
+function TraceLetter({ beat }: StageProps) {
+  return (
+    <svg className="lesson-trace" viewBox="0 0 100 110" aria-hidden>
+      <path d="M72 30C64 8 24 12 27 38C30 60 74 48 74 76C74 100 34 102 24 80" className="trace-guide" />
+      {beat >= 1 && <path key={beat >= 2 ? 'done' : 'go'} d="M72 30C64 8 24 12 27 38C30 60 74 48 74 76C74 100 34 102 24 80" className={`trace-ink${beat >= 2 ? ' done' : ''}`} />}
+    </svg>
+  );
+}
+
+function BuildWordStage({ beat }: StageProps) {
+  const letters = ['s', 'u', 'n'];
+  return (
+    <>
+      <span className={`picture-slot shown${beat === 4 ? ' bounce' : ''}`}>
+        <Picture name="sun" size={96} />
+      </span>
+      <div className="slots">
+        {letters.map((l, k) => (
+          <span key={beat > k ? `f${k}` : k} className={`slot${beat > k ? ' filled' : ''}`} style={beat > k ? fill(col(k)) : undefined}>
+            {beat > k ? l : ''}
+          </span>
+        ))}
+      </div>
+    </>
+  );
+}
+
+function RhymeStage({ beat }: StageProps) {
+  const card = (name: 'cat' | 'hat' | 'dog', from: number, glow: boolean, dim: boolean) =>
+    beat >= from ? (
+      <span key={name} className={`picture-slot shown captioned${glow ? ' glow' : ''}${dim ? ' dim' : ''}`}>
+        <span className="pic-face">
+          <Picture name={name} size="100%" />
+          <span className="pic-word">{name}</span>
+        </span>
+      </span>
+    ) : null;
+  return (
+    <div className="letter-row">
+      {card('cat', 1, beat === 3, false)}
+      {card('hat', 2, beat === 3, beat >= 4)}
+      {card('dog', 4, false, beat >= 5)}
+    </div>
+  );
+}
+
+function FamilyStage({ beat }: StageProps) {
+  const starts = ['c', 'h', 'm'];
+  const at = Math.min(Math.max(beat, 1), 3) - 1;
+  const word = (['cat', 'hat', 'mat'] as const)[at];
+  return (
+    <>
+      <div className="slots">
+        <span key={at} className="slot filled pop-in" style={fill(col(at))}>
+          {beat >= 1 ? starts[at] : '?'}
+        </span>
+        <span className="slot filled">a</span>
+        <span className="slot filled">t</span>
+      </div>
+      {beat >= 1 && (
+        <span key={word} className="picture-slot shown">
+          <Picture name={word} size={96} />
+        </span>
+      )}
+    </>
+  );
+}
+
+function SidesStage({ beat }: StageProps) {
+  const sides = beat >= 2 && beat <= 5 ? Math.min(beat - 1, 3) : 0;
+  const corners = beat >= 7 ? Math.min(beat - 6, 3) : 0;
+  return <Geo kind="triangle" color={col(0)} size="100%" className="geo-big" count={corners || sides} show={beat >= 6 ? 'corners' : 'sides'} />;
+}
+
+function HuntStage({ beat }: StageProps) {
+  const house = HUNT_PICTURES[0];
+  const want = beat === 1 ? 'triangle' : beat === 2 ? 'square' : beat === 3 ? 'circle' : null;
+  return (
+    <svg className="hunt-board" viewBox="-4 -4 208 158" aria-hidden>
+      {house.shapes.map((s, i) => {
+        const cx = s.x + s.w / 2;
+        const cy = s.y + s.h / 2;
+        const on = s.k === want;
+        const p = { fill: `var(--module-${s.c})`, stroke: on ? 'var(--plum-700)' : 'none', strokeWidth: on ? 4 : 0, opacity: want && !on ? 0.35 : 1 };
+        return (
+          <g key={on ? `on${i}-${beat}` : i} className={on ? 'hunt-piece found' : 'hunt-piece'}>
+            {s.k === 'circle' ? (
+              <ellipse cx={cx} cy={cy} rx={s.w / 2} ry={s.h / 2} {...p} />
+            ) : s.k === 'triangle' ? (
+              <path d={`M${cx} ${s.y}L${s.x + s.w} ${s.y + s.h}H${s.x}Z`} {...p} />
+            ) : (
+              <rect x={s.x} y={s.y} width={s.w} height={s.h} rx="2" {...p} />
+            )}
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
+function TakeAwayStage({ beat }: StageProps) {
+  const counted = beat >= 3 ? Math.min(beat - 2, 3) : 0;
+  return (
+    <>
+      <div className="take-row">
+        {[1, 2, 3, 4, 5].map(k => {
+          const away = beat >= 1 && k > 3;
+          return (
+            <span key={k} className={`take-dot${away ? ' away' : ''}${!away && k <= counted ? ' counted' : ''}`} style={{ background: col(4) }}>
+              {!away && k <= counted ? k : ''}
+            </span>
+          );
+        })}
+      </div>
+      <div className="lesson-word">{beat >= 6 ? '5 − 2 = 3' : beat >= 1 ? '5 − 2' : '5'}</div>
+    </>
+  );
+}
+
 export const STAGES: Record<string, ComponentType<StageProps>> = {
   'reading/clap-words': ClapWords,
-  'reading/clap-sentences': ClapSentences,
+  'stories/clap-sentences': ClapSentences,
   'reading/sound-it-out': SoundItOut,
-  'reading/first-sound': FirstSound,
+  'letters/first-sound': FirstSound,
+  'letters/trace-letters': TraceLetter,
+  'reading/build-word': BuildWordStage,
+  'reading/rhymes': RhymeStage,
+  'reading/word-families': FamilyStage,
+  'shapes/sides-corners': SidesStage,
+  'shapes/shape-hunt': HuntStage,
+  'numbers/take-away': TakeAwayStage,
   'numbers/count-dots': CountDots,
   'numbers/more-fewer': MoreFewer,
   'numbers/number-line': NumberLine,

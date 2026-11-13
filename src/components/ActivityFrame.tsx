@@ -8,6 +8,7 @@ import { BackButton, TopBar } from './ui';
 import { PlayerChip } from '../screens/Home';
 import { AREA_HOST } from '../data/characters';
 import { LessonPlayer, hasLesson } from '../lessons/LessonPlayer';
+import { Confetti } from './Confetti';
 
 // Items per round before the reward screen.
 export const ROUND_SIZE = 6;
@@ -132,6 +133,7 @@ export function ActivityFrame(p: Props) {
       {p.toolbar}
 
       <main className={`activity-card${p.feedback ? ` is-${p.feedback}` : ''}`}>
+        {p.feedback === 'right' && <Confetti key={`confetti-${p.index}`} />}
         {p.onReset && (
           <button
             type="button"

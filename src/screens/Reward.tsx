@@ -5,6 +5,7 @@ import { navigate } from '../router';
 import { setMood, speak } from '../speech';
 import { AREA_HOST, otherCharacter } from '../data/characters';
 import { Buddy } from '../components/Buddy';
+import { Confetti } from '../components/Confetti';
 import { totalStars, type Profile } from '../store';
 import { StarShape } from '../components/ui';
 import { sfx } from '../sound';
@@ -45,6 +46,7 @@ export function Reward({ area, activity, profile }: { area: Area; activity: Acti
   return (
     <div className="page fade-in">
       <div className="reward">
+        <Confetti pieces={60} big />
         <div className="reward-stage">
           <Buddy who="jabari" size={150} />
           <StarShape className="big-star" size={200} color={color} />
