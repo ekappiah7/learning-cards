@@ -13,7 +13,7 @@ src/activities: one component per activity, registered in index.ts.
 src/components: shared pieces. pictures.tsx holds the colour cartoon pictures (open the app at #/pictures to see them all), Geo.tsx and Shape.tsx draw shapes, ActivityFrame.tsx is the frame every activity uses.
 src/screens: who's playing, home, area, reward and the parent corner.
 src/lessons: the cartoon lesson player and its scenes.
-src/speech.ts and src/sound.ts: voices, music and sound effects.
+src/speech.ts, src/sound.ts and src/audio.ts: voices, music and sound effects, and the audio output they share.
 src/voice: the list of every spoken line (phrases.ts), the voice pack loader (packs.ts) and parents' own recordings (recordings.ts).
 src/store.tsx: profiles, stars and settings, saved in localStorage.
 src/update.ts: how the app moves to a new version.
@@ -25,9 +25,9 @@ Parent corner
 On the "Who is playing?" screen, press and hold the lock button at the top right for two seconds. A quick tap only says "Ask a grown-up". The parent corner has the voice switch, players (rename, change colour, add), stars per child and activity, and an Easy / Medium / Harder setting for each area. The settings for each level are in the files in src/data.
 
 Characters, voices, music and lessons
-Two guides lead the app: Jabari the lion and Jamila the owl (src/data/characters.ts). Jabari speaks with "Lewis", a British male voice, and Jamila with "Alice", a British female voice; both come from Kokoro, an open-source text-to-speech model (Apache 2.0 licence). Every line is pre-recorded in both voices (public/voice/lewis and public/voice/alice). At build time the clips are packed into about 15 files (scripts/voice/pack.mjs); the app downloads these packs itself, with retries, and keeps them on the device, so everything works offline. Jamila hosts Letters, Words and Thinking, Jabari hosts Stories, Numbers, Shapes and Play, and the other one cheers.
+Two guides lead the app: Jabari the lion and Jamila the owl (src/data/characters.ts). Jabari speaks with "Lewis", a British male voice, and Jamila with "Alice", a British female voice; both come from Kokoro, an open-source text-to-speech model (Apache 2.0 licence). Every line is pre-recorded in both voices (public/voice/lewis and public/voice/alice). At build time the clips are packed into about 17 files (scripts/voice/pack.mjs), the most used lines first; the app downloads these packs itself, with retries, and keeps them on the device, so everything works offline. Lines are decoded and played through the app's own audio output (src/audio.ts), so they start the moment they are asked for; on iPhones and iPads an audio element is used instead, which keeps working with the silent switch on. Jamila hosts Letters, Words and Thinking, Jabari hosts Stories, Numbers, Shapes and Play, and the other one cheers.
 Background music and sound effects are made live by the app's own synthesiser (src/sound.ts); the tunes are note lists in src/data/music.ts.
-Half of the activities (21) have a short "Watch first" cartoon lesson that plays the first time a child opens the activity and again from the clapperboard button. The scripts are in src/data/lessons.ts and the animated scenes in src/lessons/stages.tsx.
+Every activity (all 42) has a short "Watch first" cartoon lesson that plays before the activity the first time a child opens it and again from the clapperboard button. The six stories share one cartoon about how stories work, so it plays by itself only before the first story. The scripts are in src/data/lessons.ts and the animated scenes in src/lessons/stages.tsx and stages2.tsx. While a cartoon is open nothing else can speak, and each activity says what to do as soon as it opens.
 In the parent corner you can turn the voice, music and sound effects on or off, record each child's name and your own letter sounds. Your recordings stay on the tablet and replace the built-in versions. Anything without a recording uses the device's own voice.
 
 After adding words, sentences or lesson lines to the data files, record the new phrases in both voices (existing clips are kept):

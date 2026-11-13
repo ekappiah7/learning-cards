@@ -3,13 +3,14 @@ import { BookOpenText } from 'lucide-react';
 import { moduleVar } from '../data/areas';
 import { otherCharacter } from '../data/characters';
 import { CLAP_SENTENCES, SENTENCE_MAX_WORDS } from '../data/reading';
-import type { Story, StoryPage } from '../data/stories';
-import { getHost, lineMs, praise, speak, stop, type Speech } from '../speech';
+import type { Story } from '../data/stories';
+import { getHost, lineMs, praise, speak, stop, whenQuiet, type Speech } from '../speech';
 import { sfx } from '../sound';
 import { useLevel } from '../store';
 import { ActivityFrame, useRound } from '../components/ActivityFrame';
 import { ChoiceTiles, useAnswer, useLater, useSayOnShow } from '../components/Choices';
-import { Picture, type PictureName } from '../components/pictures';
+import type { PictureName } from '../components/pictures';
+import { Scene } from '../components/Scene';
 import { PicFace, Speaker, bare } from './common';
 import { useBuilder } from './Words';
 import { pickRound, shuffle } from './util';
@@ -106,22 +107,6 @@ export function BuildSentence({ area, activity, profile }: ActivityProps) {
 
 // ---------- Story books ----------
 
-// The picture for a page: a simple backdrop with cartoon items placed on it.
-export function Scene({ page }: { page: StoryPage }) {
-  return (
-    <div className={`scene bg-${page.bg}`} aria-hidden>
-      <span className="scene-ground" />
-      {page.items.map((it, i) => (
-        <span key={i} className="scene-item" style={{ left: `${it.x}%`, top: `${it.y}%`, width: `${it.size}%` }}>
-          <span className={it.anim ? `anim-${it.anim}` : undefined} style={{ animationDelay: `${i * 0.15}s` }}>
-            <Picture name={it.pic} size="100%" />
-          </span>
-        </span>
-      ))}
-    </div>
-  );
-}
-
 // A story: one sentence per page, read aloud with each word lighting up in
 // time, then two questions about it. Tapping a word says it.
 export function StoryBook({ area, activity, profile, story }: ActivityProps & { story: Story }) {
@@ -164,11 +149,19 @@ export function StoryBook({ area, activity, profile, story }: ActivityProps & { 
   // Read each page as it opens (on Harder the child reads first), and ask
   // each question.
   useEffect(() => {
+    let alive = true;
+    // Let the story's name (or the last line) finish first.
     const t = setTimeout(() => {
-      if (question) speak(question.ask);
-      else if (level < 3) read();
-    }, 450);
-    return () => clearTimeout(t);
+      void whenQuiet().then(() => {
+        if (!alive) return;
+        if (question) speak(question.ask);
+        else if (level < 3) read();
+      });
+    }, 250);
+    return () => {
+      alive = false;
+      clearTimeout(t);
+    };
     // Runs once per page.
   }, [index]);
 
@@ -205,7 +198,9 @@ export function StoryBook({ area, activity, profile, story }: ActivityProps & { 
     >
       {page ? (
         <>
-          <Scene key={index} page={page} />
+          <div className="scene-box">
+            <Scene key={index} page={page} />
+          </div>
           <p className="story-text">
             {page.text.split(' ').map((w, k) => (
               <button

@@ -12,6 +12,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const outDir = join(root, 'public', 'voice', 'packs');
 const VOICES = ['lewis', 'alice'];
 const PACK_BYTES = 1_500_000;
+const FIRST_PACK_BYTES = 600_000; // small, so the most used lines arrive within seconds
 
 rmSync(outDir, { recursive: true, force: true });
 mkdirSync(outDir, { recursive: true });
@@ -33,10 +34,11 @@ for (const voice of VOICES) {
     parts = [];
     size = 0;
   };
-  for (const key of Object.keys(manifest).sort()) {
+  // Manifest order is download order: the most needed lines come first.
+  for (const key of Object.keys(manifest)) {
     const file = manifest[key];
     const data = readFileSync(join(root, 'public', 'voice', voice, file));
-    if (size + data.length > PACK_BYTES) flush();
+    if (size + data.length > (packs.length ? PACK_BYTES : FIRST_PACK_BYTES)) flush();
     clips[key] = [packs.length, size, data.length, file];
     parts.push(data);
     size += data.length;

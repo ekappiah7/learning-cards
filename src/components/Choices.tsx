@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { speak, type Speech } from '../speech';
+import { prepare, speak, type Speech } from '../speech';
 import { sfx } from '../sound';
 
 // Shared pick-the-answer logic: a wrong choice wobbles and says "Try
@@ -43,12 +43,16 @@ export function useLater() {
   return later;
 }
 
-// Says `text` shortly after each new card appears. Pass the card index as
-// `card` so the same question is said again on the next card.
+// Says `text` as each new card appears. Pass the card index as `card` so
+// the same question is said again on the next card. If something is still
+// being said (the name of the activity, say), the line follows it instead
+// of cutting it off.
 export function useSayOnShow(text: Speech, card?: number) {
   const t = useRef<ReturnType<typeof setTimeout>>(undefined);
   useEffect(() => {
-    t.current = setTimeout(() => speak(text), 350);
+    if (!text.length) return;
+    prepare(text);
+    t.current = setTimeout(() => speak(text, { queue: true }), 120);
     return () => clearTimeout(t.current);
     // A new array each render must not re-trigger, so compare by content.
   }, [JSON.stringify(text), card]);

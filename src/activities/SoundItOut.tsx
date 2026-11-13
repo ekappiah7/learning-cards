@@ -3,6 +3,7 @@ import { Blend } from 'lucide-react';
 import { moduleVar, type ModuleColor } from '../data/areas';
 import { CVC_WORDS, SOUND_IT_OUT_PICTURED_ONLY } from '../data/reading';
 import { praise, speak, stop } from '../speech';
+import { useSayOnShow } from '../components/Choices';
 import { useLevel } from '../store';
 import { ActivityFrame, useRound } from '../components/ActivityFrame';
 import { Picture } from '../components/pictures';
@@ -29,6 +30,9 @@ export function SoundItOut({ area, activity, profile }: ActivityProps) {
 
   const clear = () => clearTimeout(timer.current);
   useEffect(() => clear, []);
+
+  // Say what to do on the first card.
+  useSayOnShow(index === 0 ? 'Sound it out. Tap each letter, then blend.' : '', index);
 
   const resetCard = () => {
     clear();

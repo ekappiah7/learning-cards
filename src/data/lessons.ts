@@ -1,5 +1,6 @@
 import type { CharacterId } from './characters';
 import type { Part } from '../voice/phrases';
+import { STORIES, type Story } from './stories.ts';
 
 // "Watch first" mini-lessons: one short scene per activity. Each beat is a
 // line said by Jabari or Jamila; the scene (src/lessons/stages.tsx) moves on
@@ -10,12 +11,150 @@ export type Beat = {
   say: string | Part[];
   sfx?: 'clap' | 'pop' | 'right' | 'flip' | 'whoosh' | 'pad0' | 'pad1' | 'pad2';
   hold?: number; // extra pause after the line, in ms
+  notes?: number[]; // notes played one by one after the line (MIDI numbers)
 };
 
 const J = 'jabari' as const;
 const M = 'jamila' as const;
 
+// Every story opens with the same short cartoon about how stories work,
+// shown with that story's own name, first picture and first sentence.
+const storyLesson = (st: Story): Beat[] => [
+  { by: J, say: 'Story time!', sfx: 'whoosh' },
+  { by: M, say: st.title },
+  { by: J, say: 'Watch each word light up as we read.' },
+  { by: J, say: st.pages[0].text, hold: 500 },
+  { by: M, say: 'Tap any word to hear it again.', sfx: 'pop', hold: 600 },
+  { by: J, say: 'At the end, there are two questions about the story.' },
+  { by: M, say: "Are you ready? Let's read!", sfx: 'right' },
+];
+
 export const LESSONS: Record<string, Beat[]> = {
+  ...Object.fromEntries(STORIES.map(st => [`stories/${st.id}`, storyLesson(st)])),
+  'letters/meet-letters': [
+    { by: M, say: 'Every letter has a name and a sound.' },
+    { by: J, say: ['This letter is called', 'S'], sfx: 'pop' },
+    { by: M, say: ['It says', { letter: 's' }], sfx: 'pop' },
+    { by: J, say: ['S', 'is for sun.'], sfx: 'right' },
+    { by: M, say: 'Tap the letter to hear its sound.' },
+  ],
+  'letters/find-letter': [
+    { by: M, say: 'Listen to the sound.' },
+    { by: M, say: [{ letter: 'm' }], sfx: 'pop', hold: 500 },
+    { by: J, say: 'Which letter makes that sound?', hold: 500 },
+    { by: J, say: ['This one says', { letter: 'm' }], sfx: 'right' },
+    { by: M, say: 'Listen, then tap the right letter.' },
+  ],
+  'letters/big-small': [
+    { by: M, say: 'Every letter has a big one and a small one.' },
+    { by: J, say: ['This is big', 'B'], sfx: 'pop' },
+    { by: M, say: ['This is small', 'B'], sfx: 'pop' },
+    { by: J, say: 'They look different, but they say the same sound.' },
+    { by: J, say: [{ letter: 'b' }], sfx: 'right' },
+    { by: M, say: 'Find the partner for each letter.' },
+  ],
+  'letters/abc-order': [
+    { by: M, say: 'The letters stand in a line. It is called the alphabet.' },
+    { by: J, say: 'A', sfx: 'pop' },
+    { by: J, say: 'B', sfx: 'pop' },
+    { by: J, say: 'C', sfx: 'pop' },
+    { by: M, say: ['What comes after', 'C'], hold: 600 },
+    { by: J, say: 'D', sfx: 'right' },
+    { by: M, say: 'Say the letters in order to find the missing one.' },
+  ],
+  'reading/missing-sound': [
+    { by: M, say: 'This word has lost a sound.' },
+    { by: J, say: 'cat', sfx: 'pop' },
+    { by: M, say: [{ letter: 'c' }, { letter: 'a' }, { letter: 't' }] },
+    { by: J, say: 'The first sound is missing.' },
+    { by: M, say: [{ letter: 'c' }], sfx: 'pop' },
+    { by: J, say: 'Cat! Now the word is whole.', sfx: 'right' },
+    { by: M, say: 'Say the word slowly, and listen for each sound.' },
+  ],
+  'reading/read-match': [
+    { by: M, say: 'Here is a word to read.' },
+    { by: M, say: [{ letter: 'd' }, { letter: 'o' }, { letter: 'g' }] },
+    { by: J, say: 'dog', sfx: 'pop' },
+    { by: J, say: 'Which picture shows the word?', hold: 500 },
+    { by: M, say: 'This one! Dog.', sfx: 'right' },
+    { by: J, say: 'Read the word, then tap its picture.' },
+  ],
+  'reading/tricky-words': [
+    { by: M, say: 'Some words are tricky. We cannot sound them out.' },
+    { by: J, say: 'We learn to know them when we see them.' },
+    { by: M, say: 'the', sfx: 'pop' },
+    { by: M, say: 'to', sfx: 'pop' },
+    { by: M, say: 'no', sfx: 'pop' },
+    { by: J, say: 'Listen to the word, then find it.', sfx: 'right' },
+  ],
+  'stories/build-sentence': [
+    { by: J, say: 'These words are in a muddle.' },
+    { by: M, say: 'The dog can run.' },
+    { by: J, say: 'The', sfx: 'pop' },
+    { by: J, say: 'dog', sfx: 'pop' },
+    { by: J, say: 'can', sfx: 'pop' },
+    { by: J, say: 'run', sfx: 'pop', hold: 400 },
+    { by: M, say: 'The dog can run.', sfx: 'right' },
+    { by: J, say: 'Tap the words in the right order.' },
+  ],
+  'numbers/find-number': [
+    { by: J, say: 'Every number has a name.' },
+    { by: M, say: '3', sfx: 'pop' },
+    { by: M, say: '5', sfx: 'pop' },
+    { by: M, say: '2', sfx: 'pop' },
+    { by: J, say: ['Find the number', '5'], hold: 500 },
+    { by: M, say: 'Here it is!', sfx: 'right' },
+    { by: J, say: 'Listen to the number, then tap it.' },
+  ],
+  'shapes/shape-names': [
+    { by: J, say: 'Shapes are all around us.' },
+    { by: M, say: 'circle', sfx: 'pop' },
+    { by: M, say: 'square', sfx: 'pop' },
+    { by: M, say: 'triangle', sfx: 'pop' },
+    { by: J, say: 'Find the triangle.', hold: 500 },
+    { by: M, say: 'Here it is!', sfx: 'right' },
+    { by: J, say: 'Listen to the name, then tap the shape.' },
+  ],
+  'shapes/shape-shadows': [
+    { by: J, say: 'Every shape has a shadow.' },
+    { by: M, say: 'A shadow is the same shape, but dark.', sfx: 'whoosh' },
+    { by: J, say: 'Find the shadow that fits.', hold: 500 },
+    { by: M, say: 'The star fits here!', sfx: 'right' },
+    { by: J, say: 'Look at the outline, not the colour.' },
+  ],
+  'logic/size-order': [
+    { by: M, say: 'These are all different sizes.' },
+    { by: J, say: 'Tap from smallest to biggest.' },
+    { by: M, say: '1', sfx: 'pop' },
+    { by: M, say: '2', sfx: 'pop' },
+    { by: M, say: '3', sfx: 'pop' },
+    { by: J, say: 'All in order!', sfx: 'right' },
+    { by: M, say: 'Sometimes we go the other way, from biggest to smallest.' },
+  ],
+  'logic/belongs': [
+    { by: M, say: 'Some things belong together.' },
+    { by: J, say: 'Which one is an animal?', hold: 400 },
+    { by: M, say: 'bus', sfx: 'pop' },
+    { by: M, say: 'hat', sfx: 'pop' },
+    { by: M, say: 'dog', sfx: 'pop' },
+    { by: J, say: 'The dog is an animal!', sfx: 'right' },
+    { by: M, say: 'Think about what each thing is, then choose.' },
+  ],
+  'play/pop-letters': [
+    { by: J, say: 'Balloons are floating up, with letters on them.' },
+    { by: M, say: ['Pop the balloons that say', { letter: 's' }], hold: 400 },
+    { by: J, say: [{ letter: 's' }], sfx: 'pop' },
+    { by: J, say: [{ letter: 's' }], sfx: 'pop' },
+    { by: M, say: 'Let the other letters float away.', sfx: 'whoosh' },
+    { by: J, say: 'You popped them all!', sfx: 'right' },
+  ],
+  'play/piano': [
+    { by: J, say: 'Tap the bars to make music.' },
+    { by: M, say: 'Long bars sing low.', notes: [60] },
+    { by: M, say: 'Short bars sing high.', notes: [72] },
+    { by: J, say: 'Listen to my tune.', notes: [60, 60, 67, 67, 69, 69, 67] },
+    { by: M, say: 'Now you play. Make up your own song!', sfx: 'right' },
+  ],
   'reading/clap-words': [
     { by: M, say: "Let's clap a word together!" },
     { by: J, say: 'Listen. Butterfly.' },

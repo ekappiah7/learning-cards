@@ -1656,3 +1656,73 @@ button.picture-slot { cursor: pointer; }
   .grid.fill.areas .area-tile > svg { width: clamp(40px, 6vh, 52px); height: clamp(40px, 6vh, 52px); }
   .grid.fill.areas .area-tile { font-size: clamp(18px, 2.6vh, 24px); }
 }
+
+/* ---------- More lesson scenes (src/lessons/stages2.tsx) ---------- */
+.ls-wobble { animation: wobble 0.5s var(--ease-standard) 2 !important; }
+.ls-pulse { animation: pulse 0.8s var(--ease-standard) infinite !important; }
+.tap-spot { position: relative; }
+.ls-wrap { display: inline-flex; }
+.lesson-tap { position: absolute; right: -22%; bottom: -34%; z-index: 2; display: inline-flex; color: var(--plum-950); pointer-events: none; animation: tap-press 0.9s var(--ease-standard) infinite; }
+.lesson-tap svg { fill: var(--cream-50); }
+@keyframes tap-press { 0%, 100% { transform: translate(10px, 12px); } 50% { transform: translate(0, 0) scale(0.88); } }
+.lesson-speaker, .lesson-zap { display: inline-flex; color: var(--plum-700); }
+.lesson-speaker.sounding { animation: pulse 0.45s var(--ease-standard) 3; }
+.pair-link { display: inline-flex; color: var(--plum-700); opacity: 0; transition: opacity var(--duration-normal); }
+.pair-link.on { opacity: 1; animation: pop var(--duration-slow) var(--ease-decelerate); }
+.ls-sounding > * { animation: ls-say 0.55s var(--ease-standard) both; }
+.ls-sounding > *:nth-child(2) { animation-delay: 0.62s; }
+.ls-sounding > *:nth-child(3) { animation-delay: 1.24s; }
+@keyframes ls-say { 0%, 100% { transform: none; } 40% { transform: translateY(-12px) scale(1.1); } }
+.story-under { width: 100%; min-height: 3em; display: flex; align-items: center; justify-content: center; }
+.story-title { text-align: center; font-size: clamp(var(--text-2xl), 6vw, var(--text-4xl)); }
+.lesson-stage .story-word { display: inline-flex; align-items: center; }
+.ls-reading .story-word { animation-name: ls-word; animation-timing-function: linear; }
+@keyframes ls-word {
+  0%, 99% { background: var(--module-2); color: var(--plum-950); transform: scale(1.1); }
+  100% { background: none; transform: none; }
+}
+.story-q { width: 84px; height: 84px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--module-2); color: var(--plum-950); animation-fill-mode: both; }
+.lesson-stage .scene { max-height: 30vh; }
+.num-card { display: inline-flex; flex-direction: column; align-items: center; gap: var(--space-2); }
+.num-pips { display: grid; grid-template-columns: repeat(3, 14px); gap: 5px; min-height: 33px; justify-content: center; align-content: start; }
+.num-pips i { display: block; width: 14px; height: 14px; border-radius: 50%; }
+.shadow-pair { display: flex; align-items: center; justify-content: center; gap: var(--space-3); }
+.shadow-slide { animation: shadow-slide 0.8s var(--ease-decelerate) both; }
+@keyframes shadow-slide { from { transform: translateX(-100%); opacity: 0; } to { transform: none; opacity: 1; } }
+.lesson-pop { align-self: stretch; min-height: 180px; }
+.ls-balloon { position: absolute; transform: translate(-50%, -50%); animation: ls-float 3s ease-in-out infinite; transition: top 1.8s var(--ease-standard), opacity 1.6s; }
+.ls-balloon .balloon { display: flex; align-items: center; justify-content: center; }
+.ls-balloon.away { top: -30% !important; opacity: 0; }
+@keyframes ls-float { 0%, 100% { transform: translate(-50%, -50%); } 50% { transform: translate(-50%, calc(-50% - 12px)); } }
+.lesson-pop-star { position: absolute; left: 50%; top: 50%; margin: -44px 0 0 -44px; display: inline-flex; color: var(--plum-700); }
+.lesson-pop-star svg { fill: var(--module-2); }
+.piano-bar.ls-point { outline: 4px solid var(--plum-700); outline-offset: 3px; }
+.ls-bar-in { animation: ls-bar-in 0.5s var(--ease-decelerate) both; transform-origin: bottom; }
+@keyframes ls-bar-in { from { transform: scaleY(0); } }
+.lesson-stage .piano { flex: none; height: min(30vh, 300px); }
+.lesson-stage .read-word { font-size: clamp(48px, 11vh, 104px); }
+.lesson-stage .picture-slot.captioned, .lesson-stage .letter-tile.geo-tile { width: min(150px, 25vw); height: min(150px, 25vw); }
+.lesson-stage .num-card .pic-word { font-size: clamp(15px, 3.8vw, 22px); }
+.lesson-stage .geo-big.small { width: min(34vw, 18vh, 180px); }
+@media (max-width: 600px) {
+  .lesson-stage .letter-tile.word-tile { min-width: 72px; height: 72px; padding: 0 var(--space-3); font-size: var(--text-2xl); }
+  .lesson-stage .word-slot { min-width: 56px; height: 52px; font-size: var(--text-2xl); }
+  .lesson-stage .numline:not(.letters) { gap: var(--space-2); }
+  .lesson-stage .numline:not(.letters) .num-node { width: 46px; height: 46px; font-size: var(--text-xl); }
+  .lesson-stage .numline:not(.letters)::before { bottom: 23px; }
+  .ls-balloon .balloon { width: 54px; height: 66px; font-size: var(--text-2xl); }
+  .story-q { width: 64px; height: 64px; }
+}
+
+/* Story pages: the picture takes whatever room the words and buttons leave,
+   so a long sentence never pushes the page past one screen. */
+.scene-box { width: 100%; display: flex; align-items: center; justify-content: center; position: relative; z-index: 1; --scene-ratio: 2; }
+@media (max-width: 600px) {
+  .scene-box { --scene-ratio: 1.5; }
+}
+@supports (container-type: size) and selector(:has(*)) {
+  .activity-page:has(.scene-box) { height: 100vh; height: 100dvh; }
+  .activity-page:has(.scene-box) .activity-card { min-height: 0; }
+  .scene-box { flex: 1 1 0; min-height: 80px; container-type: size; }
+  .scene-box .scene { width: min(100cqw, 660px, calc(100cqh * var(--scene-ratio))); max-height: none; }
+}

@@ -1,6 +1,7 @@
 import { AREAS, moduleVar } from '../data/areas';
 import { navigate } from '../router';
-import { speak } from '../speech';
+import { useEffect } from 'react';
+import { prepare, speak } from '../speech';
 import { line } from '../voice/phrases';
 import { totalStars, type Profile } from '../store';
 import { BackButton, Icon, StarShape, TopBar } from '../components/ui';
@@ -23,6 +24,8 @@ export function PlayerChip({ profile }: { profile: Profile }) {
 }
 
 export function Home({ profile }: { profile: Profile }) {
+  // Have each area's name ready, so it is said the moment it is tapped.
+  useEffect(() => AREAS.forEach(a => prepare(a.spoken, 'jabari')), []);
   return (
     <div className="page fade-in">
       <TopBar

@@ -9,6 +9,7 @@ import { AreaPage } from './screens/AreaPage';
 import { Reward } from './screens/Reward';
 import { Parent } from './screens/Parent';
 import { ACTIVITIES } from './activities';
+import { LessonGate } from './lessons/LessonPlayer';
 import { PictureGallery } from './components/pictures';
 import { AREA_HOST } from './data/characters';
 import { setHost } from './speech';
@@ -59,7 +60,12 @@ export function App() {
       const area = findArea(route.areaId);
       const activity = findActivity(route.areaId, route.activityId);
       const Play = ACTIVITIES[starKey(route.areaId, route.activityId)];
-      if (area && activity && Play) return <Play area={area} activity={activity} profile={current} />;
+      if (area && activity && Play)
+        return (
+          <LessonGate key={starKey(route.areaId, route.activityId)} area={area} activity={activity} profile={current}>
+            <Play area={area} activity={activity} profile={current} />
+          </LessonGate>
+        );
     }
     if (route.name === 'reward') {
       const area = findArea(route.areaId);

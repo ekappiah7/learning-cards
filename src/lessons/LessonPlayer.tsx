@@ -1,8 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Play, RotateCcw, X } from 'lucide-react';
 import { LESSONS, type Beat } from '../data/lessons';
-import { speakAndWait, stop, setMood } from '../speech';
-import { currentTheme, playMusic, sfx } from '../sound';
+import { useStore, type Profile } from '../store';
+import type { Activity, Area } from '../data/areas';
+import type { ReactNode } from 'react';
+import { prepare, setLessonOpen, setMood, speakAndWait, stop, whenQuiet } from '../speech';
+import { currentTheme, playMusic, playNote, sfx } from '../sound';
 import { Buddy } from '../components/Buddy';
 import { STAGES } from './stages';
 
@@ -18,12 +21,57 @@ export function hasLesson(key: string) {
   return key in LESSONS && key in STAGES;
 }
 
-export function LessonPlayer({ lessonKey, title, onClose }: { lessonKey: string; title: string; onClose: () => void }) {
+// The six stories share one "seen" mark, so the cartoon about how stories
+// work plays by itself once, not before every story.
+export const seenKey = (key: string) => (key.startsWith('stories/story-') ? 'stories/story' : key);
+
+// Shows an activity's cartoon before the activity itself the first time a
+// child opens it. The activity only starts once the cartoon is closed, so
+// nothing plays or speaks underneath.
+export function LessonGate({ area, activity, profile, children }: { area: Area; activity: Activity; profile: Profile; children: ReactNode }) {
+  const key = `${area.id}/${activity.id}`;
+  const { markSeen } = useStore();
+  const [watching, setWatching] = useState(() => hasLesson(key) && !profile.seen?.includes(seenKey(key)));
+  useEffect(() => {
+    if (watching) markSeen(seenKey(key));
+    // Only when the activity opens.
+  }, []);
+  if (!watching) return <>{children}</>;
+  return (
+    <div className="page activity-page">
+      <LessonPlayer lessonKey={key} title={activity.title} onClose={() => setWatching(false)} />
+    </div>
+  );
+}
+
+export function LessonPlayer({ lessonKey, title, onClose: whenClosed }: { lessonKey: string; title: string; onClose: () => void }) {
   const beats = LESSONS[lessonKey];
   const Stage = STAGES[lessonKey];
   const [beat, setBeat] = useState(-1);
+  const [step, setStep] = useState(-1); // which note of the line is sounding
   const [done, setDone] = useState(false);
   const [run, setRun] = useState(0);
+  const closed = useRef(false);
+
+  // The cartoon has the floor: whatever is underneath cannot talk over it.
+  // Closing hands the floor back first, so the activity can speak at once.
+  const onClose = () => {
+    if (!closed.current) {
+      closed.current = true;
+      stop({ lesson: true });
+      setLessonOpen(false);
+    }
+    whenClosed();
+  };
+  useEffect(() => {
+    closed.current = false;
+    setLessonOpen(true);
+    beats.forEach(b => prepare(b.say, b.by));
+    return () => {
+      if (!closed.current) stop({ lesson: true });
+      setLessonOpen(false);
+    };
+  }, [beats]);
 
   // Lesson music while open, then back to the area's tune.
   useEffect(() => {
@@ -38,7 +86,9 @@ export function LessonPlayer({ lessonKey, title, onClose }: { lessonKey: string;
     setDone(false);
     setBeat(-1);
     (async () => {
-      await wait(500);
+      // Let the name of the activity finish before the first line.
+      await wait(350);
+      await whenQuiet();
       for (let i = 0; i < beats.length && alive; i++) {
         const b = beats[i];
         setBeat(i);
@@ -47,7 +97,14 @@ export function LessonPlayer({ lessonKey, title, onClose }: { lessonKey: string;
           setMood('jabari', 'cheer', 1600);
           setMood('jamila', 'cheer', 1600);
         }
-        await speakAndWait(b.say, { by: b.by });
+        await speakAndWait(b.say, { by: b.by, lesson: true });
+        for (let k = 0; b.notes && k < b.notes.length && alive; k++) {
+          setStep(k);
+          playNote(b.notes[k], 0.5);
+          await wait(250);
+          setStep(-1);
+          await wait(110);
+        }
         if (alive) await wait(b.hold ?? 300);
       }
       if (alive) {
@@ -58,7 +115,7 @@ export function LessonPlayer({ lessonKey, title, onClose }: { lessonKey: string;
     })();
     return () => {
       alive = false;
-      stop();
+      if (!closed.current) stop({ lesson: true });
     };
   }, [run, beats]);
 
@@ -84,7 +141,8 @@ export function LessonPlayer({ lessonKey, title, onClose }: { lessonKey: string;
       window.removeEventListener('keydown', onDown, { capture: true });
       window.removeEventListener('keyup', onUp, { capture: true });
     };
-  }, [done, onClose]);
+    // onClose is stable enough: it only reads refs and the parent's handler.
+  }, [done]);
 
   const current = beat >= 0 ? beats[beat] : null;
 
@@ -99,7 +157,7 @@ export function LessonPlayer({ lessonKey, title, onClose }: { lessonKey: string;
       <h2 className="title lesson-title">{title}</h2>
 
       <div className="lesson-stage" aria-hidden>
-        <Stage beat={beat} />
+        <Stage beat={beat} step={step} />
       </div>
 
       <div className="lesson-bottom">

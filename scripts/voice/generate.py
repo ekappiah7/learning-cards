@@ -99,7 +99,8 @@ def main():
             removed += 1
 
     with open(manifest_path, 'w') as fh:
-        json.dump(dict(sorted(manifest.items())), fh, indent=0)
+        # Kept in phrase order: pack.mjs packs clips in this order.
+        json.dump(manifest, fh, indent=0)
     print(f'{len(manifest)} phrases, {made} recorded, {removed} removed')
 
 

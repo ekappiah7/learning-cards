@@ -4,6 +4,7 @@
 
 import { TUNES, type Theme } from './data/music';
 import { characterState } from './speech';
+import { audioContext, audioOut } from './audio';
 
 const MUSIC_LEVEL = 0.16;
 const DUCKED_LEVEL = 0.045;
@@ -19,26 +20,27 @@ let timer: ReturnType<typeof setInterval> | undefined;
 
 function audio(): AudioContext | null {
   if (ctx) return ctx;
-  const AC = typeof window !== 'undefined' ? window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext : undefined;
-  if (!AC) return null;
-  ctx = new AC();
-  const master = ctx.createGain();
-  master.gain.value = 1;
-  master.connect(ctx.destination);
+  const c = audioContext();
+  const out = audioOut();
+  if (!c || !out) return null;
+  ctx = c;
   musicGain = ctx.createGain();
   musicGain.gain.value = MUSIC_LEVEL;
-  musicGain.connect(master);
+  musicGain.connect(out);
   sfxGain = ctx.createGain();
   sfxGain.gain.value = SFX_LEVEL;
-  sfxGain.connect(master);
+  sfxGain.connect(out);
+  // The music starts as soon as sound is allowed.
+  ctx.addEventListener('statechange', () => {
+    if (ctx?.state === 'running' && theme && musicOn && !timer) startLoop();
+  });
   return ctx;
 }
 
-// Browsers start audio suspended until the first tap.
+// Browsers start audio suspended until the first tap (see audio.ts).
 function wake() {
-  const c = audio();
-  if (c && c.state === 'suspended') c.resume().catch(() => undefined);
-  if (theme && musicOn && !timer) startLoop();
+  audio();
+  if (ctx?.state === 'running' && theme && musicOn && !timer) startLoop();
 }
 // A soft tick for every button press.
 function tick(e: Event) {

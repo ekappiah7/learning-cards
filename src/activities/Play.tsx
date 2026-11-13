@@ -3,7 +3,7 @@ import { Eye, Pencil, Undo2, Volume2 } from 'lucide-react';
 import { moduleVar } from '../data/areas';
 import { DRAW_COLOURS, MEMORY_BOARDS, MEMORY_WORDS, SIMON_LENGTHS, SIMON_PADS, STAMPS } from '../data/play';
 import type { ShapeKind } from '../data/thinking';
-import { praise, speak, stop } from '../speech';
+import { praise, speak, stop, whenQuiet } from '../speech';
 import { useLevel } from '../store';
 import { line } from '../voice/phrases';
 import { ActivityFrame, useRound } from '../components/ActivityFrame';
@@ -188,10 +188,18 @@ export function Simon({ area, activity, profile }: ActivityProps) {
     timer.current = setTimeout(() => step(0), 400);
   }, [seq]);
 
-  // Watch the new sequence as soon as each card appears.
+  // Say what to do the first time, then show each new sequence once the
+  // talking has finished.
+  const told = useRef(false);
   useEffect(() => {
-    timer.current = setTimeout(play, 500);
-    return clear;
+    let alive = true;
+    if (!told.current) speak('Watch the colours, then copy them.', { queue: true });
+    told.current = true;
+    timer.current = setTimeout(() => void whenQuiet(6000).then(() => alive && play()), 300);
+    return () => {
+      alive = false;
+      clear();
+    };
   }, [play]);
 
   const tap = (pad: number) => {
@@ -285,6 +293,7 @@ const cssColor = (v: string) => {
 
 export function DrawBoard({ area, activity, profile }: ActivityProps) {
   const { index, next, prev } = useRound(area, activity, 1);
+  useSayOnShow('Draw and stamp. Pick a colour, then draw or stamp.', 0);
   const canvas = useRef<HTMLCanvasElement>(null);
   const [marks, setMarks] = useState<Mark[]>([]);
   const [color, setColor] = useState<string>(moduleVar(DRAW_COLOURS[0]));

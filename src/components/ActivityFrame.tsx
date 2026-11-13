@@ -65,15 +65,11 @@ type Props = {
 export function ActivityFrame(p: Props) {
   const color = moduleVar(p.area.color);
   const last = p.index >= p.total - 1;
-  const { markSeen } = useStore();
 
-  // The "Watch first" lesson plays by itself the first time a child opens
-  // this activity, and any time from the Watch button.
+  // The "Watch first" cartoon plays before the activity the first time a
+  // child opens it (see LessonGate), and any time from the Watch button.
   const lessonKey = `${p.area.id}/${p.activity.id}`;
-  const [watching, setWatching] = useState(() => hasLesson(lessonKey) && !p.profile.seen?.includes(lessonKey));
-  useEffect(() => {
-    if (watching) markSeen(lessonKey);
-  }, [watching, lessonKey, markSeen]);
+  const [watching, setWatching] = useState(false);
 
   // Keep the latest handlers in a ref so the key listener is added once.
   const h = useRef(p);
@@ -86,8 +82,13 @@ export function ActivityFrame(p: Props) {
       if (e.code === 'Space') {
         e.preventDefault();
         h.current.main.onPress();
-      } else if (e.key === 'ArrowRight') h.current.onNext();
-      else if (e.key === 'ArrowLeft') h.current.onPrev();
+      } else if (e.key === 'ArrowRight') {
+        stop();
+        h.current.onNext();
+      } else if (e.key === 'ArrowLeft') {
+        stop();
+        h.current.onPrev();
+      }
     };
     // Stop Space from also clicking whichever button has focus.
     const onUp = (e: KeyboardEvent) => {
@@ -177,7 +178,7 @@ export function ActivityFrame(p: Props) {
           className="pill secondary"
           disabled={p.index === 0}
           onClick={() => {
-            speak('Back');
+            stop();
             p.onPrev();
           }}
         >
@@ -188,7 +189,8 @@ export function ActivityFrame(p: Props) {
           type="button"
           className="pill primary"
           onClick={() => {
-            if (!last) speak('Next');
+            // Whatever was being said belongs to the card being left.
+            stop();
             p.onNext();
           }}
         >

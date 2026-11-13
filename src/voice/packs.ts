@@ -46,6 +46,29 @@ export function clipUrl(voice: Voice, key: string): string | null {
   return url;
 }
 
+// The bytes of one clip: cut from its pack when the pack is on the device,
+// otherwise fetched alone from the network (given up after a few seconds,
+// so a bad connection cannot hold a whole line up).
+export async function clipBytes(voice: Voice, key: string): Promise<ArrayBuffer | null> {
+  const clip = INDEX[voice].clips[key];
+  if (!clip) return null;
+  const [pack, offset, length, file] = clip;
+  const blob = blobs.get(INDEX[voice].packs[pack]);
+  try {
+    if (blob) return await blob.slice(offset, offset + length).arrayBuffer();
+    const stop = new AbortController();
+    const timer = setTimeout(() => stop.abort(), 4000);
+    try {
+      const res = await fetch(`./voice/${voice}/${file}`, { signal: stop.signal, priority: 'high' } as RequestInit);
+      return res.ok ? await res.arrayBuffer() : null;
+    } finally {
+      clearTimeout(timer);
+    }
+  } catch {
+    return null;
+  }
+}
+
 // How long a clip lasts, in milliseconds (0 when there is no clip).
 export function clipMs(voice: Voice, key: string) {
   const clip = INDEX[voice].clips[key];
@@ -87,6 +110,10 @@ export async function loadPacks() {
   // Interleave the two voices so both start working early.
   const order = files.slice().sort((a, b) => a.slice(a.indexOf('-')).localeCompare(b.slice(b.indexOf('-'))));
   for (const file of order) {
+    if (blobs.has(file)) {
+      set({ done: state.done + 1 });
+      continue;
+    }
     try {
       const hit = await cache?.match(DIR + file);
       let blob = hit ? await hit.blob() : null;
@@ -108,11 +135,15 @@ export async function loadPacks() {
   set({ finished: !failed, failed });
 }
 
-// Try again when the connection comes back.
+// After a failure, try again when the connection comes back, when the app
+// is opened again, and every half minute while it stays open.
 if (typeof window !== 'undefined') {
-  window.addEventListener('online', () => {
-    if (state.failed) void loadPacks();
-  });
+  const retry = () => {
+    if (state.failed && navigator.onLine !== false) void loadPacks();
+  };
+  window.addEventListener('online', retry);
+  document.addEventListener('visibilitychange', () => !document.hidden && retry());
+  setInterval(retry, 30000);
 }
 
 export function usePackState() {

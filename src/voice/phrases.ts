@@ -81,8 +81,10 @@ export function phraseKey(text: string) {
   return text.toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
-// Phrase lists for the recording script, split by how slowly to say them.
-export function allPhrases(): { normal: string[]; slow: string[] } {
+// Every phrase for the recording script, with how slowly to say it. The
+// order matters: clips are packed for download in this order, so the lines
+// every screen needs come first and each area's lines sit together.
+export function allPhrases(): { text: string; slow: boolean }[] {
   const normal = new Set<string>(FIXED);
   const slow = new Set<string>();
   const add = (s: string) => normal.add(s);
@@ -92,6 +94,15 @@ export function allPhrases(): { normal: string[]; slow: string[] } {
     add(a.spoken);
     a.activities.forEach(act => add(act.spoken));
   }
+  range(0, 20).forEach(n => add(String(n)));
+  Object.values(LETTER_SOUNDS).forEach(s => slow.add(s));
+
+  // Watch-first lessons: the first thing heard in each activity.
+  for (const beats of Object.values(LESSONS))
+    for (const b of beats) {
+      if (typeof b.say === 'string') add(b.say);
+      else b.say.forEach(p => typeof p === 'string' && add(p));
+    }
 
   // Reading
   range(1, 4).forEach(n => add(line.claps(n)));
@@ -206,13 +217,14 @@ export function allPhrases(): { normal: string[]; slow: string[] } {
   SIMON_PADS.forEach(p => add(p.name));
   STAMPS.forEach(s => add(line.stamp(s)));
 
-  // Watch-first lessons (letter parts are already covered above).
-  for (const beats of Object.values(LESSONS))
-    for (const b of beats) {
-      if (typeof b.say === 'string') add(b.say);
-      else b.say.forEach(p => typeof p === 'string' && add(p));
-    }
-
-  for (const s of slow) normal.delete(s);
-  return { normal: [...normal], slow: [...slow] };
+  // Slow phrases keep their place in the order only if nothing else put
+  // them earlier; either way they are said slowly.
+  const seen = new Set<string>();
+  const out: { text: string; slow: boolean }[] = [];
+  for (const text of [...normal, ...slow]) {
+    if (!text.trim() || seen.has(text)) continue;
+    seen.add(text);
+    out.push({ text, slow: slow.has(text) });
+  }
+  return out;
 }

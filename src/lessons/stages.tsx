@@ -5,12 +5,12 @@ import { Picture } from '../components/pictures';
 import { Shape } from '../components/Shape';
 import { Geo } from '../components/Geo';
 import { HUNT_PICTURES } from '../data/shapes';
+import { MORE_STAGES, type StageProps } from './stages2';
 
 // The animated scene for each lesson. A stage shows what belongs to the
 // current beat (line) of the script in src/data/lessons.ts: things appear,
 // light up or move as `beat` counts up.
 
-type StageProps = { beat: number };
 const C: ModuleColor[] = [6, 2, 3, 8, 5];
 const col = (i: number) => moduleVar(C[i % C.length]);
 const fill = (c: string): CSSProperties => ({ background: c, borderColor: c });
@@ -453,4 +453,5 @@ export const STAGES: Record<string, ComponentType<StageProps>> = {
   'play/memory': Memory,
   'play/simon': Simon,
   'play/draw': Draw,
+  ...MORE_STAGES,
 };

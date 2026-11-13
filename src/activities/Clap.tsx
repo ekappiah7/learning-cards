@@ -3,6 +3,7 @@ import { Hand, Play } from 'lucide-react';
 import { moduleVar, type ModuleColor } from '../data/areas';
 import { CLAP_MAX_SYLLABLES, CLAP_MAX_WORDS, CLAP_SENTENCES, CLAP_WORDS } from '../data/reading';
 import { speak, stop } from '../speech';
+import { useSayOnShow } from '../components/Choices';
 import { useLevel } from '../store';
 import { line } from '../voice/phrases';
 import { ActivityFrame, Chips, useRound } from '../components/ActivityFrame';
@@ -105,6 +106,10 @@ function Clap({ area, activity, profile, config: c }: ActivityProps & { config: 
 
   const clear = () => clearTimeout(timer.current);
   useEffect(() => clear, []);
+
+  // Ask the question as each card appears; words are said too, so a child
+  // who cannot read yet knows what to clap.
+  useSayOnShow(c.kind === 'syllables' ? [c.spoken, whole()] : c.spoken, index);
 
   const resetCard = () => {
     clear();

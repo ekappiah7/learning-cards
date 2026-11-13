@@ -1,6 +1,7 @@
 import { moduleVar, type Area } from '../data/areas';
 import { navigate } from '../router';
-import { speak } from '../speech';
+import { useEffect } from 'react';
+import { prepare, speak } from '../speech';
 import { starKey, type Profile } from '../store';
 import { BackButton, Icon, Stars, TopBar } from '../components/ui';
 import { PlayerChip } from './Home';
@@ -9,6 +10,8 @@ import { AREA_HOST } from '../data/characters';
 
 export function AreaPage({ area, profile }: { area: Area; profile: Profile }) {
   const color = moduleVar(area.color);
+  // Have each activity's name ready, so it is said the moment it is tapped.
+  useEffect(() => area.activities.forEach(act => prepare(act.spoken)), [area]);
   return (
     <div className="page fade-in">
       <TopBar
